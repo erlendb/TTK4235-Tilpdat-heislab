@@ -195,15 +195,35 @@ int main() {
         queue_clear();
         lights_clear();
 
-        //Nødstopp deaktivert: skru av lampe, lukk døra og gå til idle
+        //Nødstopp deaktivert
         if (!elev_get_stop_signal()) {
+          //Skrur av stopplys
           elev_set_stop_lamp(0);
-          door_close();
-          //Endrer stoppflagget hvis heisen står mellom to etasjer så det kan brukes av go-state
-          if (floor == -1) stopped = STOPPED_BETWEEN;
-          //Fjerner stoppflagget hvis vi står i en etasje
-          else stopped = NOT_STOPPED;
-          state = idle;
+
+          //Nellom to etasjer: sett stoppflagg og gå til idle-state
+          if (floor == -1) {
+            //Endrer stoppflagget hvis heisen står mellom to etasjer så det kan brukes av go-state
+             stopped = STOPPED_BETWEEN;
+             state = idle;
+          }
+          //I en etasje: starter dørklokka
+          else {
+            if (doorTimer == -1) {
+              printf("doorTimer == -1");
+              doorTimer = time(NULL);
+            }
+          }
+        }
+
+        //Når døra har vært åpen lenge nok endrer vi stoppflagget og går til idle-state
+        if (floor != -1) {
+          if (time(NULL) - doorTimer > 3) {
+            doorTimer = -1;
+            door_close();
+            //Fjerner stoppflagget hvis vi står i en etasje
+            stopped = NOT_STOPPED;
+            state = idle;
+          }
         }
 
 		    break;
