@@ -41,6 +41,9 @@ int main() {
 
   int laststate = state;
 
+  //Initialiseringsvariabel. Settes til 1 når heisen har nådd oppstartstilstanden (fullført første ordre)
+  int initialized = 0;
+
 	while(1) {
 
     if (laststate != state) printf("state: %d", state);
@@ -52,32 +55,36 @@ int main() {
     	state = stop;
 		}
 
-		//Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
-    for (int f = 0; f < N_FLOORS; f++) {
+    //Bestillinger og bestillingslys deaktiveres når heisen er i innkjøringsfasen
+    if (initialized) {
 
-    //Henter signaler fra knapper
-    int button_command = elev_get_button_signal(BUTTON_COMMAND,f);
-    int button_call_up = elev_get_button_signal(BUTTON_CALL_UP, f);
-    int button_call_down = elev_get_button_signal(BUTTON_CALL_DOWN, f);
+  		//Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
+      for (int f = 0; f < N_FLOORS; f++) {
+
+      //Henter signaler fra knapper
+      int button_command = elev_get_button_signal(BUTTON_COMMAND,f);
+      int button_call_up = elev_get_button_signal(BUTTON_CALL_UP, f);
+      int button_call_down = elev_get_button_signal(BUTTON_CALL_DOWN, f);
 
 
-    //Setter tilsvarende bestillingslys
-    if (button_command) elev_set_button_lamp(BUTTON_COMMAND,f,1);
-    if (button_call_up) elev_set_button_lamp(BUTTON_CALL_UP,f,1);
-    if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,f,1);
+      //Setter tilsvarende bestillingslys
+      if (button_command) elev_set_button_lamp(BUTTON_COMMAND,f,1);
+      if (button_call_up) elev_set_button_lamp(BUTTON_CALL_UP,f,1);
+      if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,f,1);
 
-    //Finner bestillinger og oppdaterer køen
-    if (queue[f] != ORDER_ALL) {
+      //Finner bestillinger og oppdaterer køen
+      if (queue[f] != ORDER_ALL) {
 
-      if (button_command
-      || (button_call_up && button_call_down)
-      || (button_call_up && queue[f] == ORDER_DOWN)
-      || (button_call_down && queue[f] == ORDER_UP)
-      ) {
-        queue_update(f,ORDER_ALL);
-      }
-      else if (elev_get_button_signal(BUTTON_CALL_UP,f)) queue_update(f, ORDER_UP);
-      else if (elev_get_button_signal(BUTTON_CALL_DOWN,f)) queue_update(f, ORDER_DOWN);
+        if (button_command
+        || (button_call_up && button_call_down)
+        || (button_call_up && queue[f] == ORDER_DOWN)
+        || (button_call_down && queue[f] == ORDER_UP)
+        ) {
+          queue_update(f,ORDER_ALL);
+        }
+        else if (elev_get_button_signal(BUTTON_CALL_UP,f)) queue_update(f, ORDER_UP);
+        else if (elev_get_button_signal(BUTTON_CALL_DOWN,f)) queue_update(f, ORDER_DOWN);
+        }
       }
     }
 
@@ -143,8 +150,10 @@ int main() {
 		    break;
 
     	case stay:
-        printf("\nqueueu[f] %d", queue[floor]);
         //Stay-state skal passe på alt som skjer i en etasje: åpne/lukke dør, obstruksjon...
+
+        //Sette initializedflagg når heisen er initialisert første gang
+        if (!initialized) initialized = 1;
 
         //Stopper heisen, skrur av lys, fjerner denne etasjen fra køen, åpner døra og starter timeren i det vi kommer inn i stay-state
     		if (doorTimer == -1) {
