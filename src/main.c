@@ -37,7 +37,12 @@ int main() {
   set_direction(DIRN_DOWN);
   state = go;
 
+  int laststate = state;
+
 	while(1) {
+
+    if (laststate != state) printf("state: %d", state);
+    laststate = state;
     //Greier som skal skje for hver iterasjon, uavhengig av state, utføres her
 
     //Ser etter stoppsignal. Går til stop-state hvis nødstopp aktiveres.
@@ -88,7 +93,6 @@ int main() {
 
     	case go:
         //Sender heisen i riktig retning ut fra idle-state og stop-state
-        printf("Stopped %d",stopped);
         if (stopped == STOPPED_BETWEEN) {
           //Vill algoritme som finner riktig retning for stuck heis:
           if (queue_check_above(lastFloor-(direction==DIRN_DOWN))) set_direction(DIRN_UP);
@@ -137,25 +141,34 @@ int main() {
 		    break;
 
     	case stay:
+        printf("\nqueueu[f] %d", queue[floor]);
         //Stay-state skal passe på alt som skjer i en etasje: åpne/lukke dør, obstruksjon...
 
-        //Åpne døra og start timeren i det vi kommer inn i stay-state
+        //Stopper heisen, skrur av lys, fjerner denne etasjen fra køen, åpner døra og starter timeren i det vi kommer inn i stay-state
     		if (doorTimer == -1) {
 	        set_direction(DIRN_STOP);
+          elev_set_button_lamp(BUTTON_COMMAND, floor, 0);
+          elev_set_button_lamp(BUTTON_CALL_UP, floor, 0);
+          elev_set_button_lamp(BUTTON_CALL_DOWN, floor, 0);
+        	queue_update(floor,-1);
 	        door_open();
 	        doorTimer = time(NULL);
 		    }
+
+        //Resetter timeren (holder døra oppe litt til), skrur av lys og fjerner fra kø hvis det dukker opp bestillinger i samme etasje som vi står i
+        if (queue[floor] != -1) {
+          doorTimer = -1;
+        }
         /*
         //Obstruksjon
         else {
           if (elev_get_obstruction_signal()) doorTimer = time(NULL);
         }
         */
-        //Lukk døra og resett timeren etter 3 sekunder. Fjerner denne etasjen fra køen. Går til idle etterpå.
+        //Lukk døra og resett timeren etter 3 sekunder. Går til idle etterpå.
         if (time(NULL) - doorTimer > 3) {
         	door_close();
         	doorTimer = -1;
-        	queue_update(floor,-1);
         	state = idle;
         }
 
