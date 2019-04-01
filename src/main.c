@@ -20,34 +20,28 @@ int main() {
   enum states {idle, go, stay, stop};
   int state; //Starter i go-state for å kjøre heisen til kjent starttilstand
 
-  //Stopptilstander
+  //Stoppflagg
   enum stops {NOT_STOPPED, STOPPED, STOPPED_BETWEEN};
   int stopped = NOT_STOPPED;
 
-  //Etasje
+  //Nåværende etasje
   int floor;
 
-  //Timer
+  //Dørklokke
   time_t doorTimer = -1;
 
-  //Kø
+  //Initialiserer køen.
   queue_clear();
-  lights_clear();
 
   //Kjører heisen til kjent tilstand.
   queue_update(0, ORDER_ALL); //første etasje, alle retninger
   set_direction(DIRN_DOWN);
   state = go;
 
-  int laststate = state;
-
   //Initialiseringsvariabel. Settes til 1 når heisen har nådd oppstartstilstanden (fullført første ordre)
   int initialized = 0;
 
 	while(1) {
-
-    if (laststate != state) printf("state: %d", state);
-    laststate = state;
     //Greier som skal skje for hver iterasjon, uavhengig av state, utføres her
 
     //Ser etter stoppsignal. Går til stop-state hvis nødstopp aktiveres.
@@ -56,8 +50,8 @@ int main() {
 		}
 
     //Bestillinger og bestillingslys deaktiveres når heisen er i innkjøringsfasen
-    if (initialized) {
-
+    if (!initialized) {
+    } else {
   		//Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
       for (int f = 0; f < N_FLOORS; f++) {
 
@@ -73,12 +67,12 @@ int main() {
       if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,f,1);
 
       //Finner bestillinger og oppdaterer køen
-      if (queue[f] != ORDER_ALL) {
+      if (queue_get(f) != ORDER_ALL) {
 
         if (button_command
         || (button_call_up && button_call_down)
-        || (button_call_up && queue[f] == ORDER_DOWN)
-        || (button_call_down && queue[f] == ORDER_UP)
+        || (button_call_up && queue_get(f) == ORDER_DOWN)
+        || (button_call_down && queue_get(f) == ORDER_UP)
         ) {
           queue_update(f,ORDER_ALL);
         }
@@ -124,9 +118,6 @@ int main() {
         	elev_set_floor_indicator(floor);
 		    	lastFloor = floor;
 
-          queue_print(); /*
-          printf("qstop %d %d %d %d", queue_stop(0), queue_stop(1), queue_stop(2), queue_stop(3));
-          printf("Floor) %d\n", floor); */
           //Sjekker om vi har en bestilling (aka om vi skal stoppe). Går eventuelt til stay-state.
           if (queue_stop(floor)) {
             state = stay;
@@ -167,7 +158,7 @@ int main() {
 		    }
 
         //Resetter timeren (holder døra oppe litt til), skrur av lys og fjerner fra kø hvis det dukker opp bestillinger i samme etasje som vi står i
-        if (queue[floor] != -1) {
+        if (queue_get(floor) != -1) {
           doorTimer = -1;
         }
         /*
@@ -192,7 +183,7 @@ int main() {
         if (!stopped) {
           set_direction(DIRN_STOP);
           elev_set_stop_lamp(1);
-          doorTimer = -1;
+          doorTimer = -1; //Denne er viktig i tilfelle nødstopp inntreffer i stay-state mens døra er åpen.
 
           //Åpner døra hvis vi er i en etasje
           if (floor != -1) door_open();

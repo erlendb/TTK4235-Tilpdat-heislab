@@ -7,6 +7,7 @@ int lastFloor = -1;
 elev_motor_direction_t direction = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
 int queue[N_FLOORS] = {0};
 
+//Oppdaterer køen. Bør kanskje bytte navn til queue_set()
 void queue_update(int floor, int order) {
 	int queueValue = queue[floor];
 	if (order == -1){		//kan sette inn ingen bestilling når vi clearer etasjen
@@ -23,12 +24,14 @@ void queue_update(int floor, int order) {
 	}
 }
 
+//Sletter alle bestillinger i køen
 void queue_clear() {
 	for (int i=0;i<=3;i++) {
 		queue_update(i,-1);
 	}
 }
 
+//Teller antall etasjer som har bestillinger
 int queue_count() {
 	int count = 0;
 	for (int i = 0; i < N_FLOORS; i++) {
@@ -37,6 +40,7 @@ int queue_count() {
 	return count;
 }
 
+//Returnerer hvorvidt vi skal stoppe i gitt etasje
 int queue_stop(int floor) {
 	order_t order = queue[floor];
 
@@ -62,7 +66,7 @@ int queue_stop(int floor) {
 	return 0;
 }
 
-// Sjekker om det finnes flere bestillinger over eller under gitt etasje. True: det finnes bestillinger. False: ingen bestillinger.
+// Sjekker om det finnes flere bestillinger over gitt etasje. True: det finnes bestillinger. False: ingen bestillinger.
 int queue_check_above(int floor) {
 	for (int i = floor + 1; i < N_FLOORS; i++) {
 		if (queue[i] != -1) return 1;
@@ -70,6 +74,7 @@ int queue_check_above(int floor) {
 	return 0;
 }
 
+//Sjekker om det finnes flere bestillinger under gitt etasje.
 int queue_check_below(int floor) {
 	for (int i = floor - 1; i >= 0; i--) {
 		if (queue[i] != -1) return 1;
@@ -77,12 +82,14 @@ int queue_check_below(int floor) {
 	return 0;
 }
 
+int queue_get(int floor) {
+	return queue[floor];
+}
+
+//Setter retning på motoren, samt lagrer siste bevegelsesretning i direction-variabelen
+// Denne har ikke noe i kømodulen å gjøre
 void set_direction(elev_motor_direction_t dirn) {
 	elev_set_motor_direction(dirn);
 	 //direction får kun verdiene DIRN_UP eller DIRN_DOWN. Ved stopp vil direction inneholde sist kjente heisretning.
 	if (dirn != DIRN_STOP) direction = dirn;
-}
-
-void queue_print() {
-	printf("\nQueue: %d %d %d %d\n", queue[0], queue[1], queue[2], queue[3]);
 }

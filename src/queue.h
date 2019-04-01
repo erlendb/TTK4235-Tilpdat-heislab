@@ -18,9 +18,10 @@ void queue_update(int floor, int type);
 void queue_clear();
 int queue_stop(int floor);
 int queue_count();
-void queue_print();
 
 int queue_check_above(int floor);
 int queue_check_below(int floor);
+
+int queue_get(int floor);
 
 void set_direction(elev_motor_direction_t dirn);
