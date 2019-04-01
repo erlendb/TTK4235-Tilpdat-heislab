@@ -5,6 +5,7 @@
 #include "driver/elev.h"
 #include "door.h"
 #include "queue.h"
+#include "lights.h"
 
 int main() {
 
@@ -31,6 +32,7 @@ int main() {
 
   //Kø
   queue_clear();
+  lights_clear();
 
   //Kjører heisen til kjent tilstand.
   queue_update(0, ORDER_ALL); //første etasje, alle retninger
@@ -191,6 +193,7 @@ int main() {
 
         //Tømmer køen og hindrer nye Bestillinger
         queue_clear();
+        lights_clear();
 
         //Nødstopp deaktivert: skru av lampe, lukk døra og gå til idle
         if (!elev_get_stop_signal()) {
