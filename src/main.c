@@ -6,8 +6,10 @@
 #include "door.h"
 #include "queue.h"
 #include "lights.h"
+#include "state.h"
 
 int main() {
+
 
   // Initialize hardware
   if (!elev_init()) {
@@ -15,46 +17,20 @@ int main() {
     return 1;
   }
 
-  //Heistilstander
-  enum states {idle, go, stay, stop};
-  int state; //Starter i go-state for å kjøre heisen til kjent starttilstand
-
-  //Stoppflagg
-  enum stops {NOT_STOPPED, STOPPED, STOPPED_BETWEEN};
-  int stopped = NOT_STOPPED;
-
-  //Nåværende etasje
-  int floor;
-
   //Dørklokke
-  time_t doorTimer = -1;
+  door_timer_deactivate();
 
-  //Initialiserer køen.
-  queue_clear();
+  //KJør start-state
+  state_t state = state_start();
 
-  //Kjører heisen ned til nærmeste etasje. Sender så heisen inn i idle-state
-  set_direction(DIRN_DOWN);
-  int initialized = 0;
-  while (!initialized) {
-    //Stopper heisen når vi har havnet i en etasje
-	floor = elev_get_floor_sensor_signal();
-    if (floor != -1) {
-	  elev_set_floor_indicator(floor);
-      initialized = 1;
-      set_direction(DIRN_STOP);
-    }
-  }
-  //Sender heisen til idle-state
-  state = idle;
+  while(1) {
+  //Greier som skal skje for hver iterasjon, uavhengig av state, utføres her
 
-	while(1) {
-    //Greier som skal skje for hver iterasjon, uavhengig av state, utføres her
-
-    //Ser etter stoppsignal. Går til stop-state hvis nødstopp aktiveres.
-		if (elev_get_stop_signal()) {
-    	state = stop;
-		}
-		if (state != stop) elev_set_stop_lamp(0);
+  //Ser etter stoppsignal. Går til stop-state hvis nødstopp aktiveres.
+	if (elev_get_stop_signal()) {
+	state = stop;
+	}
+	if (state != stop) elev_set_stop_lamp(0);
 
 	//Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
     queue_check_buttons();
@@ -62,154 +38,21 @@ int main() {
     //Tilstander: idle, go, stay, stop
     switch(state) {
     	case idle:
-        //Idle-state skal ikke gjøre noe som helst. Sender rett videre til go-state hvis det finnes noe i køen. Alternativt venter på ny bestilling.
-
-    		//Gå til go-state hvis det finnes bestilling i køen
-        if (queue_count()) {
-          state = go;
-        }
-
-		    break;
+        	state = state_idle();
+			break;
 
     	case go:
-
-        //Sender heisen i riktig retning ut fra idle-state og stop-state
-        if (stopped == STOPPED_BETWEEN) {
-          //Vill algoritme som finner riktig retning for stuck heis:
-          if (queue_check_above(lastFloor-(direction==DIRN_DOWN))) set_direction(DIRN_UP);
-          else set_direction(DIRN_DOWN);
-          //Resetter stoppflagg
-          stopped = NOT_STOPPED;
-
-        } else {
-          set_direction(direction);
-        }
-        //Go-state skal kjøre heisen i retning av en bestilling. Skal stoppe hvis vi passerer etasjer med bestillinger i samme retning.
-
-        //Oppdaterer etasjevariabel
-		    floor = elev_get_floor_sensor_signal();
-
-        //Hvis vi har havnet i en etasje:
-        if (floor != -1) {
-
-          //Oppdaterer etasjelys og lastFloor
-        	elev_set_floor_indicator(floor);
-		    	lastFloor = floor;
-
-          //Sjekker om vi har en bestilling (aka om vi skal stoppe). Går eventuelt til stay-state.
-          if (queue_stop(floor)) {
-            state = stay;
-          } else {
-            //Bestemme retning på heisen
-            //Snu retningen hvis vi er øverst eller nederst
-            if (floor == 0) {
-              set_direction(DIRN_UP);
-            } else if (floor == N_FLOORS-1) {
-              set_direction(DIRN_DOWN);
-            }
-            //Snu retningen hvis det ikke er flere bestillinger lenger fram i kjøreretningen
-            if (direction == DIRN_UP && !queue_check_above(floor)) set_direction(DIRN_DOWN);
-            if (direction == DIRN_DOWN && !queue_check_below(floor)) set_direction(DIRN_UP);
-          }
-
-		    } else {
-          //Hvis vi er mellom to etasjer skal heisen bare surre videre i samme retning :)
-        }
-
+			state = state_go();
 		    break;
 
     	case stay:
-
-        //Stay-state skal passe på alt som skjer i en etasje: åpne/lukke dør, obstruksjon...
-
-        //Sette initializedflagg når heisen er initialisert første gang
-        if (!initialized) initialized = 1;
-
-        //Stopper heisen, skrur av lys, fjerner denne etasjen fra køen, åpner døra og starter timeren i det vi kommer inn i stay-state
-    		if (doorTimer == -1) {
-	        set_direction(DIRN_STOP);
-          elev_set_button_lamp(BUTTON_COMMAND, floor, 0);
-          if (floor != N_FLOORS -1) elev_set_button_lamp(BUTTON_CALL_UP, floor, 0);
-          if (floor != 0)			elev_set_button_lamp(BUTTON_CALL_DOWN, floor, 0);
-        	queue_update(floor,-1);
-	        door_open();
-	        doorTimer = time(NULL);
-		    }
-
-        //Resetter timeren (holder døra oppe litt til), skrur av lys og fjerner fra kø hvis det dukker opp bestillinger i samme etasje som vi står i
-        if (queue_get(floor) != -1) {
-          doorTimer = -1;
-        }
-        /*
-        //Obstruksjon
-        else {
-          if (elev_get_obstruction_signal()) doorTimer = time(NULL);
-        }
-        */
-        //Lukk døra og resett timeren etter 3 sekunder. Går til idle etterpå.
-        if (time(NULL) - doorTimer > 3) {
-        	door_close();
-        	doorTimer = -1;
-        	state = idle;
-        }
-
+			state = state_stay();
 		    break;
 
     	case stop:
-        //Stop-state aktiveres ved nødstopp. Her skal køen slettes og nye bestillinger skal ikke tas hensyn til.
-
-        //Stopper motor, setter stopplampa, resetter dørtimer og evt. åpner døra når vi går inn i nødstopp
-        if (!stopped) {
-          set_direction(DIRN_STOP);
-          doorTimer = -1; //Denne er viktig i tilfelle nødstopp inntreffer i stay-state mens døra er åpen.
-
-          //Åpner døra hvis vi er i en etasje
-          if (floor != -1) door_open();
-        }
-        //Setter stoppflagg
-        stopped = STOPPED;
-		//Hver gang knappen trykkes skrus lyset på og dørtimeren blir satt på nytt
-		if (elev_get_stop_signal()){
-			doorTimer = -1;
-			elev_set_stop_lamp(1);
-		}
-        //Tømmer køen og hindrer nye Bestillinger
-        queue_clear();
-        lights_clear();
-
-        //Nødstopp deaktivert
-        if (!elev_get_stop_signal()) {
-          //Skrur av stopplys
-          elev_set_stop_lamp(0);
-
-          //Nellom to etasjer: sett stoppflagg og gå til idle-state
-          if (floor == -1) {
-            //Endrer stoppflagget hvis heisen står mellom to etasjer så det kan brukes av go-state
-             stopped = STOPPED_BETWEEN;
-             state = idle;
-          }
-          //I en etasje: starter dørklokka
-          else {
-            if (doorTimer == -1) {
-              printf("doorTimer == -1");
-              doorTimer = time(NULL);
-            }
-          }
-        }
-
-        //Når døra har vært åpen lenge nok endrer vi stoppflagget og går til idle-state
-        if (floor != -1) {
-          if (time(NULL) - doorTimer > 3) {
-            doorTimer = -1;
-            door_close();
-            //Fjerner stoppflagget hvis vi står i en etasje
-            stopped = NOT_STOPPED;
-            state = idle;
-          }
-        }
-
+			state = state_stop();
 		    break;
-    }
+    	}
 	}
 
   return 0;

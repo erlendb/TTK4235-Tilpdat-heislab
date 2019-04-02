@@ -3,8 +3,9 @@
   * @brief Køsystem
   */
 
-
 extern int lastFloor;
+extern int currentFloor;
+extern elev_motor_direction_t lastDirection;
 extern elev_motor_direction_t direction;
 extern int queue[];
 

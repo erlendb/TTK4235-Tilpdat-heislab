@@ -4,6 +4,8 @@
 #include "queue.h"
 
 int lastFloor = -1;
+int currentFloor = -1;
+elev_motor_direction_t lastDirection = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
 elev_motor_direction_t direction = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
 int queue[N_FLOORS] = {0};
 
@@ -49,17 +51,17 @@ int queue_stop(int floor) {
 		return 1;
 	}
 	// Bestilling i samme retning som heisen kjører. Stopper.
-	if (direction == DIRN_UP && order == ORDER_UP) {
+	if (lastDirection == DIRN_UP && order == ORDER_UP) {
 		return 1;
 	}
-	if (direction == DIRN_DOWN && order == ORDER_DOWN) {
+	if (lastDirection == DIRN_DOWN && order == ORDER_DOWN) {
 		return 1;
 	}
 	// Bestilling motsatt av heisens retning. Stopper hvis det ikke er noen flere bestillinger lenger bort i heisens kjøreretning.
-	if (direction == DIRN_UP && order == ORDER_DOWN) {
+	if (lastDirection == DIRN_UP && order == ORDER_DOWN) {
 		return !queue_check_above(floor);
 	}
-	if (direction == DIRN_DOWN && order == ORDER_UP) {
+	if (lastDirection == DIRN_DOWN && order == ORDER_UP) {
 		return !queue_check_below(floor);
 	}
 	// Ingen bestilling. Stopper ikke.
@@ -91,7 +93,8 @@ int queue_get(int floor) {
 void set_direction(elev_motor_direction_t dirn) {
 	elev_set_motor_direction(dirn);
 	 //direction får kun verdiene DIRN_UP eller DIRN_DOWN. Ved stopp vil direction inneholde sist kjente heisretning.
-	if (dirn != DIRN_STOP) direction = dirn;
+	if (dirn != DIRN_STOP) lastDirection = dirn;
+	direction = dirn;
 }
 
 void queue_check_buttons() {
