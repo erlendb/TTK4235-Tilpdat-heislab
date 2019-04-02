@@ -38,7 +38,9 @@ int main() {
   int initialized = 0;
   while (!initialized) {
     //Stopper heisen når vi har havnet i en etasje
-    if (elev_get_floor_sensor_signal() != -1) {
+	floor = elev_get_floor_sensor_signal();
+    if (floor != -1) {
+	  elev_set_floor_indicator(floor);
       initialized = 1;
       set_direction(DIRN_STOP);
     }
@@ -57,19 +59,23 @@ int main() {
 		//Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
     for (int f = 0; f < N_FLOORS; f++) {
 
-    //Henter signaler fra knapper
-    int button_command = elev_get_button_signal(BUTTON_COMMAND,f);
-    int button_call_up = elev_get_button_signal(BUTTON_CALL_UP, f);
-    int button_call_down = elev_get_button_signal(BUTTON_CALL_DOWN, f);
+	    //Henter signaler fra knapper
+		int button_command;
+		int button_call_up = 0;
+		int button_call_down = 0;
+
+	    button_command = elev_get_button_signal(BUTTON_COMMAND,f);
+	    if (f != N_FLOORS - 1)	 button_call_up = elev_get_button_signal(BUTTON_CALL_UP, f);
+		if (f != 0)				 button_call_down = elev_get_button_signal(BUTTON_CALL_DOWN, f);
 
 
-    //Setter tilsvarende bestillingslys
-    if (button_command) elev_set_button_lamp(BUTTON_COMMAND,f,1);
-    if (button_call_up) elev_set_button_lamp(BUTTON_CALL_UP,f,1);
-    if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,f,1);
+	    //Setter tilsvarende bestillingslys
+	    if (button_command) elev_set_button_lamp(BUTTON_COMMAND,f,1);
+	    if (button_call_up) elev_set_button_lamp(BUTTON_CALL_UP,f,1);
+	    if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,f,1);
 
-    //Finner bestillinger og oppdaterer køen
-    if (queue_get(f) != ORDER_ALL) {
+	    //Finner bestillinger og oppdaterer køen
+	    if (queue_get(f) != ORDER_ALL) {
 
       if (button_command
       || (button_call_up && button_call_down)
@@ -78,8 +84,8 @@ int main() {
       ) {
         queue_update(f,ORDER_ALL);
       }
-      else if (elev_get_button_signal(BUTTON_CALL_UP,f)) queue_update(f, ORDER_UP);
-      else if (elev_get_button_signal(BUTTON_CALL_DOWN,f)) queue_update(f, ORDER_DOWN);
+      else if (button_call_up) queue_update(f, ORDER_UP);
+      else if (button_call_down) queue_update(f, ORDER_DOWN);
       }
     }
 
@@ -151,8 +157,8 @@ int main() {
     		if (doorTimer == -1) {
 	        set_direction(DIRN_STOP);
           elev_set_button_lamp(BUTTON_COMMAND, floor, 0);
-          elev_set_button_lamp(BUTTON_CALL_UP, floor, 0);
-          elev_set_button_lamp(BUTTON_CALL_DOWN, floor, 0);
+          if (floor != N_FLOORS -1) elev_set_button_lamp(BUTTON_CALL_UP, floor, 0);
+          if (floor != 0)			elev_set_button_lamp(BUTTON_CALL_DOWN, floor, 0);
         	queue_update(floor,-1);
 	        door_open();
 	        doorTimer = time(NULL);
@@ -183,7 +189,6 @@ int main() {
         //Stopper motor, setter stopplampa, resetter dørtimer og evt. åpner døra når vi går inn i nødstopp
         if (!stopped) {
           set_direction(DIRN_STOP);
-          elev_set_stop_lamp(1);
           doorTimer = -1; //Denne er viktig i tilfelle nødstopp inntreffer i stay-state mens døra er åpen.
 
           //Åpner døra hvis vi er i en etasje
@@ -191,7 +196,11 @@ int main() {
         }
         //Setter stoppflagg
         stopped = STOPPED;
-
+		//Hver gang knappen trykkes skrus lyset på og dørtimeren blir satt på nytt
+		if (elev_get_stop_signal()){
+			doorTimer = -1;
+			elev_set_stop_lamp(1);
+		}
         //Tømmer køen og hindrer nye Bestillinger
         queue_clear();
         lights_clear();
