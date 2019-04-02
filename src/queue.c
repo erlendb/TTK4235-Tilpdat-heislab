@@ -93,3 +93,37 @@ void set_direction(elev_motor_direction_t dirn) {
 	 //direction får kun verdiene DIRN_UP eller DIRN_DOWN. Ved stopp vil direction inneholde sist kjente heisretning.
 	if (dirn != DIRN_STOP) direction = dirn;
 }
+
+void queue_check_buttons() {
+	for (int f = 0; f < N_FLOORS; f++) {
+
+	    //Henter signaler fra knapper
+		int button_command;
+		int button_call_up = 0;
+		int button_call_down = 0;
+
+	    button_command = elev_get_button_signal(BUTTON_COMMAND,f);
+	    if (f != N_FLOORS - 1)	 button_call_up = elev_get_button_signal(BUTTON_CALL_UP, f);
+		if (f != 0)				 button_call_down = elev_get_button_signal(BUTTON_CALL_DOWN, f);
+
+
+	    //Setter tilsvarende bestillingslys
+	    if (button_command) elev_set_button_lamp(BUTTON_COMMAND,f,1);
+	    if (button_call_up) elev_set_button_lamp(BUTTON_CALL_UP,f,1);
+	    if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,f,1);
+
+	    //Finner bestillinger og oppdaterer køen
+	    if (queue_get(f) != ORDER_ALL) {
+
+		      if (button_command
+		      || (button_call_up && button_call_down)
+		      || (button_call_up && queue_get(f) == ORDER_DOWN)
+		      || (button_call_down && queue_get(f) == ORDER_UP)
+		      ) {
+		        queue_update(f,ORDER_ALL);
+		      }
+		      else if (button_call_up) queue_update(f, ORDER_UP);
+		      else if (button_call_down) queue_update(f, ORDER_DOWN);
+      }
+    }
+}

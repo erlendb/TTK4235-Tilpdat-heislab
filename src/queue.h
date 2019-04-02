@@ -38,3 +38,5 @@ int queue_check_below(int floor);
 int queue_get(int floor);
 
 void set_direction(elev_motor_direction_t dirn);
+
+void queue_check_buttons();
