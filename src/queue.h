@@ -1,3 +1,9 @@
+/**
+  * @file
+  * @brief Køsystem
+  */
+
+
 extern int lastFloor;
 extern elev_motor_direction_t direction;
 extern int queue[];
@@ -14,7 +20,14 @@ typedef enum orders {
 //Etasjer
 typedef enum floors {FIRST, SECOND, THIRD, FOURTH} floor_t;
 
-void queue_update(int floor, int type);
+/*!
+  * @brief Oppdaterer køen ut fra ny bestilling og eksisterende bestillinger.
+  * @details
+      order = -1 (ingen bestilling) overskriver etasjen.
+  * @param[in]  floor Etasjen der bestillinger skal oppdateres.
+  * @param[in]  order Den nye bestillingen i gitt etasje.
+  */
+void queue_update(int floor, int order);
 void queue_clear();
 int queue_stop(int floor);
 int queue_count();
