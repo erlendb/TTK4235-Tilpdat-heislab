@@ -33,13 +33,18 @@ int main() {
   //Initialiserer køen.
   queue_clear();
 
-  //Kjører heisen til kjent tilstand.
-  queue_update(0, ORDER_ALL); //første etasje, alle retninger
+  //Kjører heisen ned til nærmeste etasje. Sender så heisen inn i idle-state
   set_direction(DIRN_DOWN);
-  state = go;
-
-  //Initialiseringsvariabel. Settes til 1 når heisen har nådd oppstartstilstanden (fullført første ordre)
   int initialized = 0;
+  while (!initialized) {
+    //Stopper heisen når vi har havnet i en etasje
+    if (elev_get_floor_sensor_signal() != -1) {
+      initialized = 1;
+      set_direction(DIRN_STOP);
+    }
+  }
+  //Sender heisen til idle-state
+  state = idle;
 
 	while(1) {
     //Greier som skal skje for hver iterasjon, uavhengig av state, utføres her
@@ -49,36 +54,32 @@ int main() {
     	state = stop;
 		}
 
-    //Bestillinger og bestillingslys deaktiveres når heisen er i innkjøringsfasen
-    if (!initialized) {
-    } else {
-  		//Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
-      for (int f = 0; f < N_FLOORS; f++) {
+		//Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
+    for (int f = 0; f < N_FLOORS; f++) {
 
-      //Henter signaler fra knapper
-      int button_command = elev_get_button_signal(BUTTON_COMMAND,f);
-      int button_call_up = elev_get_button_signal(BUTTON_CALL_UP, f);
-      int button_call_down = elev_get_button_signal(BUTTON_CALL_DOWN, f);
+    //Henter signaler fra knapper
+    int button_command = elev_get_button_signal(BUTTON_COMMAND,f);
+    int button_call_up = elev_get_button_signal(BUTTON_CALL_UP, f);
+    int button_call_down = elev_get_button_signal(BUTTON_CALL_DOWN, f);
 
 
-      //Setter tilsvarende bestillingslys
-      if (button_command) elev_set_button_lamp(BUTTON_COMMAND,f,1);
-      if (button_call_up) elev_set_button_lamp(BUTTON_CALL_UP,f,1);
-      if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,f,1);
+    //Setter tilsvarende bestillingslys
+    if (button_command) elev_set_button_lamp(BUTTON_COMMAND,f,1);
+    if (button_call_up) elev_set_button_lamp(BUTTON_CALL_UP,f,1);
+    if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,f,1);
 
-      //Finner bestillinger og oppdaterer køen
-      if (queue_get(f) != ORDER_ALL) {
+    //Finner bestillinger og oppdaterer køen
+    if (queue_get(f) != ORDER_ALL) {
 
-        if (button_command
-        || (button_call_up && button_call_down)
-        || (button_call_up && queue_get(f) == ORDER_DOWN)
-        || (button_call_down && queue_get(f) == ORDER_UP)
-        ) {
-          queue_update(f,ORDER_ALL);
-        }
-        else if (elev_get_button_signal(BUTTON_CALL_UP,f)) queue_update(f, ORDER_UP);
-        else if (elev_get_button_signal(BUTTON_CALL_DOWN,f)) queue_update(f, ORDER_DOWN);
-        }
+      if (button_command
+      || (button_call_up && button_call_down)
+      || (button_call_up && queue_get(f) == ORDER_DOWN)
+      || (button_call_down && queue_get(f) == ORDER_UP)
+      ) {
+        queue_update(f,ORDER_ALL);
+      }
+      else if (elev_get_button_signal(BUTTON_CALL_UP,f)) queue_update(f, ORDER_UP);
+      else if (elev_get_button_signal(BUTTON_CALL_DOWN,f)) queue_update(f, ORDER_DOWN);
       }
     }
 
