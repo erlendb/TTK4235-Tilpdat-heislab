@@ -3,6 +3,7 @@
 #include "queue.h"
 #include "lights.h"
 #include "state.h"
+#include "timer.h"
 
 int stopped = NOT_STOPPED;
 
@@ -86,24 +87,24 @@ state_t state_stay(){
     //Stay-state skal passe på alt som skjer i en etasje: åpne/lukke dør, obstruksjon...
 
     //Stopper heisen, skrur av lys, fjerner denne etasjen fra køen, åpner døra og starter timeren i det vi kommer inn i stay-state
-	if (!door_is_timer_activated()) {
+	if (!timer_is_activated()) {
         set_direction(DIRN_STOP);
         elev_set_button_lamp(BUTTON_COMMAND, currentFloor, 0);
         if (currentFloor != N_FLOORS -1) elev_set_button_lamp(BUTTON_CALL_UP, currentFloor, 0);
         if (currentFloor != 0)			elev_set_button_lamp(BUTTON_CALL_DOWN, currentFloor, 0);
     	queue_update(currentFloor,-1);
         door_open();
-        door_timer_start();
+        timer_start();
 	 }
 
     //Resetter timeren (holder døra oppe litt til), skrur av lys og fjerner fra kø hvis det dukker opp bestillinger i samme etasje som vi står i
     if (queue_get(currentFloor) != -1) {
-      door_timer_deactivate();
+      timer_deactivate();
     }
     //Lukk døra og resett timeren etter 3 sekunder. Går til idle etterpå.
-    if (door_timer_exceeds_threshold()) {
+    if (timer_exceeds_threshold()) {
     	door_close();
-	    door_timer_deactivate();
+	    timer_deactivate();
     	return idle;
     }
 	return stay;
@@ -116,7 +117,7 @@ state_t state_stop() {
     //Stopper motor, setter stopplampa, resetter dørtimer og evt. åpner døra når vi går inn i nødstopp
     if (!stopped) {
       set_direction(DIRN_STOP);
-      door_timer_deactivate(); //Denne er viktig i tilfelle nødstopp inntreffer i stay-state mens døra er åpen.
+      timer_deactivate(); //Denne er viktig i tilfelle nødstopp inntreffer i stay-state mens døra er åpen.
 
       //Åpner døra hvis vi er i en etasje
       if (currentFloor != -1) door_open();
@@ -125,7 +126,7 @@ state_t state_stop() {
     stopped = STOPPED;
 	//Hver gang knappen trykkes skrus lyset på og dørtimeren blir satt på nytt
 	if (elev_get_stop_signal()){
-		door_timer_start();
+		timer_start();
 		elev_set_stop_lamp(1);
 	}
     //Tømmer køen og hindrer nye Bestillinger
@@ -145,16 +146,16 @@ state_t state_stop() {
       }
       //I en etasje: starter dørklokka
       else {
-        if (!door_is_timer_activated()) {
-          door_timer_start();
+        if (!timer_is_activated()) {
+          timer_start();
         }
       }
     }
 
     //Når døra har vært åpen lenge nok endrer vi stoppflagget og går til idle-state
     if (currentFloor != -1) {
-      if (door_timer_exceeds_threshold()) {
-        door_timer_deactivate();
+      if (timer_exceeds_threshold()) {
+        timer_deactivate();
         door_close();
         //Fjerner stoppflagget hvis vi står i en etasje
         stopped = NOT_STOPPED;

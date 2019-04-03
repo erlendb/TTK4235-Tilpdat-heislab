@@ -7,50 +7,49 @@
 #include "queue.h"
 #include "lights.h"
 #include "state.h"
+#include "timer.h"
 
 int main() {
-
-
   // Initialize hardware
   if (!elev_init()) {
-   printf("Unable to initialize elevator hardware!\n");
+    printf("Unable to initialize elevator hardware!\n");
     return 1;
   }
 
   //Dørklokke
-  door_timer_deactivate();
+  timer_deactivate();
 
   //KJør start-state
   state_t state = state_start();
 
   while(1) {
-  //Greier som skal skje for hver iterasjon, uavhengig av state, utføres her
+    //Greier som skal skje for hver iterasjon, uavhengig av state, utføres her
 
-  //Ser etter stoppsignal. Går til stop-state hvis nødstopp aktiveres.
-	if (elev_get_stop_signal()) {
-	state = stop;
-	}
-	if (state != stop) elev_set_stop_lamp(0);
+    //Ser etter stoppsignal. Går til stop-state hvis nødstopp aktiveres.
+    if (elev_get_stop_signal()) {
+      state = stop;
+    }
+    if (state != stop) elev_set_stop_lamp(0);
 
-	//Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
+    //Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
     queue_check_buttons();
 
-    //Tilstander: idle, go, stay, stop
+    //Tilstandsmaskin
     switch(state) {
     	case idle:
-        	state = state_idle();
-			break;
+      	state = state_idle();
+        break;
 
     	case go:
-			state = state_go();
+			  state = state_go();
 		    break;
 
     	case stay:
-			state = state_stay();
+        state = state_stay();
 		    break;
 
     	case stop:
-			state = state_stop();
+        state = state_stop();
 		    break;
     	}
 	}

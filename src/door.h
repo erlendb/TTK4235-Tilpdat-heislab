@@ -1,12 +1,12 @@
+/*! @file
+  * @brief Dør
+  */
 
-extern int doorTimer;
 
-
-void door_timer_start();
-int door_timer_exceeds_threshold();
-void door_timer_deactivate();
-int door_is_timer_activated();
-
+/*! @brief Åpner døra
+  */
 void door_open();
 
+/*! @brief Lukker døra
+  */
 void door_close();
