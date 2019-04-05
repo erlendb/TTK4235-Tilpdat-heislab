@@ -2,13 +2,14 @@
 #include <time.h>
 
 int doorTimer = -1;
+int timeLimit = 3;
 
 void timer_start() {
 	doorTimer = time(NULL);
 }
 
-int timer_exceeds_threshold() {
-	return (time(NULL) - doorTimer > 3);
+int timer_check() {
+	return (time(NULL) - doorTimer > timeLimit);
 }
 
 void timer_deactivate() {

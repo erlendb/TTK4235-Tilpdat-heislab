@@ -8,6 +8,8 @@ typedef enum states {idle, go, stay, stop} state_t;
 //Stoppflagg
 enum stops {NOT_STOPPED, STOPPED};
 
+int stopped;
+
 /*! @brief Kjører start-state
   * @details Kjører heisen ned til nærmeste etasje hvis heisen startes mellom to etasjer. Heisen blir stående hvis den startes i en etasje.
   *

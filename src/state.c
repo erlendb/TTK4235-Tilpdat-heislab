@@ -7,7 +7,6 @@
 
 int stopped = NOT_STOPPED;
 
-
 state_t state_start(){
 	//Initialiserer køen.
 	queue_clear();
@@ -36,7 +35,7 @@ state_t state_idle(){
 }
 
 state_t state_go() {
-    //Oppdaterer etasjevariabel
+  //Oppdaterer etasjevariabel
 	currentFloor = elev_get_floor_sensor_signal();
 
     //Sender heisen i riktig retning ut fra idle-state og stop-state
@@ -45,7 +44,7 @@ state_t state_go() {
       if (queue_check_above(lastFloor-(lastDirection==DIRN_DOWN))) set_direction(DIRN_UP);
       else set_direction(DIRN_DOWN);
 
-    } else {
+    } else if (queue_get(currentFloor) == -1) {
       set_direction(lastDirection);
     }
     //Go-state skal kjøre heisen i retning av en bestilling. Skal stoppe hvis vi passerer etasjer med bestillinger i samme retning.
@@ -102,7 +101,7 @@ state_t state_stay(){
       timer_deactivate();
     }
     //Lukk døra og resett timeren etter 3 sekunder. Går til idle etterpå.
-    if (timer_exceeds_threshold()) {
+    if (timer_check()) {
     	door_close();
 	    timer_deactivate();
     	return idle;
@@ -154,7 +153,7 @@ state_t state_stop() {
 
     //Når døra har vært åpen lenge nok endrer vi stoppflagget og går til idle-state
     if (currentFloor != -1) {
-      if (timer_exceeds_threshold()) {
+      if (timer_check()) {
         timer_deactivate();
         door_close();
         //Fjerner stoppflagget hvis vi står i en etasje

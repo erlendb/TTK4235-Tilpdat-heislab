@@ -2,7 +2,9 @@
   * @brief Timer
   */
 
-extern int doorTimer;
+
+int doorTimer;
+int timeLimit;
 
 /*! @brief Starter klokka
 */
@@ -12,7 +14,7 @@ void timer_start();
 *
 * @return Hvorvidt vi har passert grensetiden, 1 (passert) eller 0 (ikke passert)
 */
-int timer_exceeds_threshold();
+int timer_check();
 
 /*! @brief Deaktiverer klokka
 */
