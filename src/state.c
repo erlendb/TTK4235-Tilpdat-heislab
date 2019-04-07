@@ -4,6 +4,7 @@
 #include "lights.h"
 #include "state.h"
 #include "timer.h"
+#include "elevator.h"
 
 #include <stdio.h>
 
@@ -18,9 +19,9 @@ state_t state_start() {
 	queue_clear_all();
 
 	//Kjører heisen ned til nærmeste etasje. Sender så heisen inn i idle-state
-	if (elev_get_floor_sensor_signal() == -1) set_direction(DIRN_DOWN);
+	if (elev_get_floor_sensor_signal() == -1) elevator_set_direction(DIRN_DOWN);
 	while (elev_get_floor_sensor_signal() == -1);
-	set_direction(DIRN_STOP);
+	elevator_set_direction(DIRN_STOP);
 	elev_set_floor_indicator(elev_get_floor_sensor_signal());
 
 	return idle;
@@ -38,8 +39,8 @@ state_t state_go() {
   //Sender heisen i riktig retning ut fra stop-state
   if (currentFloor == -1 && direction == DIRN_STOP) {
     //Vill algoritme som finner riktig retning for stuck heis:
-    if (queue_check_above(lastFloor-(lastDirection==DIRN_DOWN))) set_direction(DIRN_UP);
-    else set_direction(DIRN_DOWN);
+    if (queue_check_above(lastFloor-(lastDirection==DIRN_DOWN))) elevator_set_direction(DIRN_UP);
+    else elevator_set_direction(DIRN_DOWN);
   }
 
   //Hvis vi har havnet i en etasje:
@@ -54,15 +55,15 @@ state_t state_go() {
     } else {
       //Bestemme retning på heisen
       //Snu retningen hvis vi er øverst eller nederst
-      if (currentFloor == 0) set_direction(DIRN_UP);
-      else if (currentFloor == N_FLOORS-1) set_direction(DIRN_DOWN);
+      if (currentFloor == 0) elevator_set_direction(DIRN_UP);
+      else if (currentFloor == N_FLOORS-1) elevator_set_direction(DIRN_DOWN);
 
       //Snu retningen hvis det ikke er flere bestillinger lenger fram i kjøreretningen. Gå mot bestilling hvis vi kommer fra start-state, Ellers fortsett i samme retning.
-      if (lastDirection == DIRN_UP && !queue_check_above(currentFloor)) set_direction(DIRN_DOWN);
-      else if (lastDirection == DIRN_DOWN && !queue_check_below(currentFloor)) set_direction(DIRN_UP);
-      else if (lastDirection == DIRN_STOP && queue_check_above(currentFloor)) set_direction(DIRN_UP);
-      else if (lastDirection == DIRN_STOP) set_direction(DIRN_DOWN);
-      else set_direction(lastDirection);
+      if (lastDirection == DIRN_UP && !queue_check_above(currentFloor)) elevator_set_direction(DIRN_DOWN);
+      else if (lastDirection == DIRN_DOWN && !queue_check_below(currentFloor)) elevator_set_direction(DIRN_UP);
+      else if (lastDirection == DIRN_STOP && queue_check_above(currentFloor)) elevator_set_direction(DIRN_UP);
+      else if (lastDirection == DIRN_STOP) elevator_set_direction(DIRN_DOWN);
+      else elevator_set_direction(lastDirection);
     }
   }
 	return go;
@@ -74,7 +75,7 @@ state_t state_stay(){
 
   //Stopper heisen, skrur av lys, fjerner denne etasjen fra køen, åpner døra og starter timeren i det vi kommer inn i stay-state
 	if (!timer_is_activated()) {
-    set_direction(DIRN_STOP);
+    elevator_set_direction(DIRN_STOP);
     lights_clear(currentFloor);
     queue_clear(currentFloor);
     door_open();
@@ -93,7 +94,7 @@ state_t state_stay(){
 }
 
 state_t state_stop() {
-  if (direction != DIRN_STOP) set_direction(DIRN_STOP);
+  if (direction != DIRN_STOP) elevator_set_direction(DIRN_STOP);
 
   queue_clear_all();
   lights_clear_all();

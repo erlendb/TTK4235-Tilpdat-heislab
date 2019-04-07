@@ -4,9 +4,6 @@
 #include "queue.h"
 #include "elevator.h"
 
-int lastFloor = -1;
-elev_motor_direction_t lastDirection = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
-elev_motor_direction_t direction = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
 int queue[N_FLOORS] = {0};
 
 //Oppdaterer køen. Bør kanskje bytte navn til queue_set()
@@ -74,43 +71,10 @@ int queue_get(int floor) {
 	return queue[floor];
 }
 
-//Setter retning på motoren, samt lagrer siste bevegelsesretning i direction-variabelen
-// Denne har ikke noe i kømodulen å gjøre
-void set_direction(elev_motor_direction_t dirn) {
-	elev_set_motor_direction(dirn);
-	//direction får kun verdiene DIRN_UP eller DIRN_DOWN. Ved stopp vil direction inneholde sist kjente heisretning.
-	if (dirn != DIRN_STOP) lastDirection = dirn;
-	direction = dirn;
-}
-
 void queue_update(int buttonSignals[][N_BUTTONS]) {
 	for (int floor=0; floor < N_FLOORS; floor++) {
 		for (int button=0; button < N_BUTTONS; button++) {
 			if (buttonSignals[floor][button]) queue_add(floor, button);
 		}
 	}
-}
-
-void queue_check_buttons() {
-	for (int floor = 0; floor < N_FLOORS; floor++) {
-
-		//Henter signaler fra knapper
-		int button_command;
-		int button_call_up = 0;
-		int button_call_down = 0;
-
-    button_command = elev_get_button_signal(BUTTON_COMMAND,floor);
-    if (floor != N_FLOORS - 1) button_call_up = elev_get_button_signal(BUTTON_CALL_UP, floor);
-		if (floor != 0) button_call_down = elev_get_button_signal(BUTTON_CALL_DOWN, floor);
-
-
-    //Setter tilsvarende bestillingslys
-    if (button_command) elev_set_button_lamp(BUTTON_COMMAND,floor,1);
-    if (button_call_up) elev_set_button_lamp(BUTTON_CALL_UP,floor,1);
-    if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,floor,1);
-
-    if (button_command) queue_add(floor, ORDER_ALL);
-    if (button_call_up) queue_add(floor, ORDER_UP);
-    if (button_call_down) queue_add(floor, ORDER_DOWN);
-  }
 }
