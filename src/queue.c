@@ -2,6 +2,7 @@
 
 #include "driver/elev.h"
 #include "queue.h"
+#include "elevator.h"
 
 int lastFloor = -1;
 elev_motor_direction_t lastDirection = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
@@ -12,27 +13,27 @@ int queue[N_FLOORS] = {0};
 void queue_add(int floor, int order) {
 	int oldOrder = queue[floor];
 
-	if (order == -1) queue[floor] = -1;
-	else if ((oldOrder == 0 || oldOrder == 1) && oldOrder != order) queue[floor] = 2;
-	else if (oldOrder != 2) queue[floor] = order;
+	if (order == ORDER_NO) queue[floor] = ORDER_NO;
+	else if ((oldOrder == ORDER_UP || oldOrder == ORDER_DOWN) && oldOrder != order) queue[floor] = ORDER_ALL;
+	else if (oldOrder != ORDER_ALL) queue[floor] = order;
 }
 
 //Sletter alle bestillinger i køen
 void queue_clear_all() {
-	for (int i=0;i<=3;i++) {
-		queue_add(i,-1);
+	for (int i=0;i<N_FLOORS;i++) {
+		queue_add(i,ORDER_NO);
 	}
 }
 
 void queue_clear(int floor) {
-	queue_add(floor, -1);
+	queue_add(floor, ORDER_NO);
 }
 
 //Teller antall etasjer som har bestillinger
 int queue_count() {
 	int count = 0;
 	for (int i = 0; i < N_FLOORS; i++) {
-		count += (queue[i] != -1);
+		count += (queue[i] != ORDER_NO);
 	}
 	return count;
 }
@@ -56,7 +57,7 @@ int queue_stop(int floor) {
 // Sjekker om det finnes flere bestillinger over gitt etasje. True: det finnes bestillinger. False: ingen bestillinger.
 int queue_check_above(int floor) {
 	for (int i = floor + 1; i < N_FLOORS; i++) {
-		if (queue[i] != -1) return 1;
+		if (queue[i] != ORDER_NO) return 1;
 	}
 	return 0;
 }
@@ -64,7 +65,7 @@ int queue_check_above(int floor) {
 //Sjekker om det finnes flere bestillinger under gitt etasje.
 int queue_check_below(int floor) {
 	for (int i = floor - 1; i >= 0; i--) {
-		if (queue[i] != -1) return 1;
+		if (queue[i] != ORDER_NO) return 1;
 	}
 	return 0;
 }
@@ -80,6 +81,14 @@ void set_direction(elev_motor_direction_t dirn) {
 	//direction får kun verdiene DIRN_UP eller DIRN_DOWN. Ved stopp vil direction inneholde sist kjente heisretning.
 	if (dirn != DIRN_STOP) lastDirection = dirn;
 	direction = dirn;
+}
+
+void queue_update() {
+	for (int floor=0; floor < N_FLOORS; floor++) {
+		for (int button=0; button < N_BUTTONS; button++) {
+			if (buttonSignals[floor][button]) queue_add(floor, button);
+		}
+	}
 }
 
 void queue_check_buttons() {

@@ -7,3 +7,5 @@
 void lights_clear(int floor);
 
 void lights_clear_all();
+
+void lights_update();

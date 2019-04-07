@@ -8,6 +8,7 @@
 #include "lights.h"
 #include "state.h"
 #include "timer.h"
+#include "elevator.h"
 
 int main() {
 
@@ -19,7 +20,12 @@ int main() {
     if (elev_get_stop_signal()) state = stop;
 
     //Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
-    queue_check_buttons();
+    //queue_check_buttons();
+
+    elevator_update_button_signals();
+    queue_update();
+    lights_update();
+
 
     switch(state) {
     	case idle:

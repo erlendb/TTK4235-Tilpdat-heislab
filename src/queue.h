@@ -10,8 +10,8 @@ extern int queue[];
 //Bestillinger
 typedef enum orders {
   ORDER_NO = -1,
-  ORDER_DOWN = 0,
-  ORDER_UP = 1,
+  ORDER_UP = 0,
+  ORDER_DOWN = 1,
   ORDER_ALL = 2
 } order_t;
 
@@ -67,6 +67,8 @@ int queue_get(int floor);
 /*! @brief Sjekker alle knapper og oppdaterer kø og bestillingslys deretter.
   */
 void queue_check_buttons();
+
+void queue_update();
 
 /*! @brief Sender motoren i riktig retning, og oppdaterer direction- og lastDirection-variabler.
   * @param[in] dirn Ny motorretning
