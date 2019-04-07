@@ -1,9 +1,16 @@
+/*! @file
+  * @brief Heis
+  */
+
 #include "driver/elev.h"
 
 extern int lastFloor;
 extern elev_motor_direction_t lastDirection;
 extern elev_motor_direction_t direction;
 
+/*! @brief Henter knappesignaler og oppdaterer array.
+  * @param[out] buttonSignals Knappetrykksignalene lagres her.
+  */
 void elevator_update_button_signals(int buttonSignals[][N_BUTTONS]);
 
 

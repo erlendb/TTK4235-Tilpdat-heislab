@@ -20,7 +20,6 @@ void elevator_update_button_signals(int buttonSignals[][N_BUTTONS]) {
   }
 }
 
-
 //Setter retning på motoren, samt lagrer siste bevegelsesretning i direction-variabelen
 // Denne har ikke noe i kømodulen å gjøre
 void elevator_set_direction(elev_motor_direction_t dirn) {

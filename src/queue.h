@@ -12,9 +12,8 @@ typedef enum orders {
   ORDER_ALL = 2
 } order_t;
 
-/*! @brief Oppdaterer køen ut fra ny bestilling og eksisterende bestillinger.
-  * @details
-      order = -1 (ingen bestilling) overskriver etasjen.
+/*! @brief      Oppdaterer køen ut fra ny bestilling og eksisterende bestillinger.
+  * @details    order = -1 (ingen bestilling) overskriver etasjen.
   * @param[in]  floor Etasjen der bestillinger skal oppdateres.
   * @param[in]  order Den nye bestillingen i gitt etasje.
   */
@@ -24,7 +23,8 @@ void queue_add(int floor, int order);
   */
 void queue_clear_all();
 
-
+/*! @brief Sletter alle bestillinger i gitt etasje
+  * @param[in] floor Etasjen bestillinger skal slettes fra
 void queue_clear(int floor);
 
 /*! @brief Sjekker om vi skal stoppe i gitt etasje, med hensyn til retningen heisen er på vei i
@@ -61,4 +61,7 @@ int queue_check_below(int floor);
   */
 int queue_get(int floor);
 
+/*! @brief Oppdaterer køen med bestillinger fra knappetrykkarray
+  * @param[in] buttonSignals Array med nye knappetrykk
+  */
 void queue_update(int buttonSignals[][N_BUTTONS]);
