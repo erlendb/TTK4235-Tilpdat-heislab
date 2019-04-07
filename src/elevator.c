@@ -1,8 +1,8 @@
 #include "elevator.h"
 
 int lastFloor = -1;
-elev_motor_direction_t lastDirection = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
-elev_motor_direction_t direction = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
+elev_motor_direction_t lastDirection = DIRN_STOP;
+elev_motor_direction_t currentDirection = DIRN_STOP;
 
 void elevator_update_button_signals(int buttonSignals[][N_BUTTONS]) {
   for (int floor = 0; floor < N_FLOORS; floor++) {
@@ -20,11 +20,9 @@ void elevator_update_button_signals(int buttonSignals[][N_BUTTONS]) {
   }
 }
 
-//Setter retning på motoren, samt lagrer siste bevegelsesretning i direction-variabelen
-// Denne har ikke noe i kømodulen å gjøre
 void elevator_set_direction(elev_motor_direction_t dirn) {
 	elev_set_motor_direction(dirn);
 	//direction får kun verdiene DIRN_UP eller DIRN_DOWN. Ved stopp vil direction inneholde sist kjente heisretning.
 	if (dirn != DIRN_STOP) lastDirection = dirn;
-	direction = dirn;
+	currentDirection = dirn;
 }

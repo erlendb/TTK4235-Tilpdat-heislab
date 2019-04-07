@@ -2,10 +2,6 @@
   * @brief Timer
   */
 
-
-int doorTimer;
-int timeLimit;
-
 /*! @brief Starter klokka
 */
 void timer_start();

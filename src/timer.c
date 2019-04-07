@@ -10,8 +10,8 @@ void timer_start() {
 }
 
 int timer_check() {
-	//Muligens: if doorTimer == -1 return 0
-	return (time(NULL) - doorTimer > timeLimit);
+	if (doorTimer == -1) return 0;
+	else return (time(NULL) - doorTimer > timeLimit);
 }
 
 void timer_deactivate() {
