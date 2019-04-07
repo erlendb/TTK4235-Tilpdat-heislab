@@ -75,10 +75,8 @@ state_t state_stay(){
   //Stopper heisen, skrur av lys, fjerner denne etasjen fra køen, åpner døra og starter timeren i det vi kommer inn i stay-state
 	if (!timer_is_activated()) {
     set_direction(DIRN_STOP);
-    elev_set_button_lamp(BUTTON_COMMAND, currentFloor, 0);
-    if (currentFloor != N_FLOORS -1) elev_set_button_lamp(BUTTON_CALL_UP, currentFloor, 0);
-    if (currentFloor != 0) elev_set_button_lamp(BUTTON_CALL_DOWN, currentFloor, 0);
-    queue_update(currentFloor,-1);
+    lights_clear(currentFloor);
+    queue_clear(currentFloor);
     door_open();
     timer_start();
   }

@@ -8,35 +8,24 @@ elev_motor_direction_t lastDirection = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stop
 elev_motor_direction_t direction = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
 int queue[N_FLOORS] = {0};
 
-void queue_print() {
-	printf("queue: %d %d %d %d\n", queue[0], queue[1], queue[2], queue[3]);
-}
-
 //Oppdaterer køen. Bør kanskje bytte navn til queue_set()
-void queue_update(int floor, int order) {
-	int queueValue = queue[floor];
-	if (order == -1){		//kan sette inn ingen bestilling når vi clearer etasjen
-		queue[floor] = -1;
-	}
-	else if (queueValue == 0 || queueValue == 1){
-		if (queueValue != order) {
-			queue[floor] = 2;		//bestilling opp og ned er det samme som lugarbestilling
-		}
-	}
-	else if (queueValue != 2){
-		queue[floor] = order;	//ingen bestilling fra før, setter bestilling opp eller ned
-	}
+void queue_add(int floor, int order) {
+	int oldOrder = queue[floor];
+
+	if (order == -1) queue[floor] = -1;
+	else if ((oldOrder == 0 || oldOrder == 1) && oldOrder != order) queue[floor] = 2;
+	else if (oldOrder != 2) queue[floor] = order;
 }
 
 //Sletter alle bestillinger i køen
 void queue_clear_all() {
 	for (int i=0;i<=3;i++) {
-		queue_update(i,-1);
+		queue_add(i,-1);
 	}
 }
 
 void queue_clear(int floor) {
-	queue_update(floor, -1);
+	queue_add(floor, -1);
 }
 
 //Teller antall etasjer som har bestillinger
@@ -53,24 +42,13 @@ int queue_stop(int floor) {
 	order_t order = queue[floor];
 
 	//Bestilling inni heis eller bestilling både opp og ned. Stopper uansett.
-	if (order == ORDER_ALL) {
-		return 1;
-	}
+	if (order == ORDER_ALL) return 1;
 	// Bestilling i samme retning som heisen kjører. Stopper.
-	if (lastDirection == DIRN_UP && order == ORDER_UP) {
-		return 1;
-	}
-	if (lastDirection == DIRN_DOWN && order == ORDER_DOWN) {
-		return 1;
-	}
+	if (lastDirection == DIRN_UP && order == ORDER_UP) return 1;
+	if (lastDirection == DIRN_DOWN && order == ORDER_DOWN) return 1;
 	// Bestilling motsatt av heisens retning. Stopper hvis det ikke er noen flere bestillinger lenger bort i heisens kjøreretning.
-	if (lastDirection == DIRN_UP && order == ORDER_DOWN) {
-		return !queue_check_above(floor);
-	}
-	if (lastDirection == DIRN_DOWN && order == ORDER_UP) {
-		printf("\nq_stop c_below %d", queue_check_below(floor));
-		return !queue_check_below(floor);
-	}
+	if (lastDirection == DIRN_UP && order == ORDER_DOWN) return !queue_check_above(floor);
+	if (lastDirection == DIRN_DOWN && order == ORDER_UP) return !queue_check_below(floor);
 	// Ingen bestilling. Stopper ikke.
 	return 0;
 }
@@ -99,41 +77,31 @@ int queue_get(int floor) {
 // Denne har ikke noe i kømodulen å gjøre
 void set_direction(elev_motor_direction_t dirn) {
 	elev_set_motor_direction(dirn);
-	 //direction får kun verdiene DIRN_UP eller DIRN_DOWN. Ved stopp vil direction inneholde sist kjente heisretning.
+	//direction får kun verdiene DIRN_UP eller DIRN_DOWN. Ved stopp vil direction inneholde sist kjente heisretning.
 	if (dirn != DIRN_STOP) lastDirection = dirn;
 	direction = dirn;
 }
 
 void queue_check_buttons() {
-	for (int f = 0; f < N_FLOORS; f++) {
+	for (int floor = 0; floor < N_FLOORS; floor++) {
 
-	    //Henter signaler fra knapper
+		//Henter signaler fra knapper
 		int button_command;
 		int button_call_up = 0;
 		int button_call_down = 0;
 
-	    button_command = elev_get_button_signal(BUTTON_COMMAND,f);
-	    if (f != N_FLOORS - 1)	 button_call_up = elev_get_button_signal(BUTTON_CALL_UP, f);
-		if (f != 0)				 button_call_down = elev_get_button_signal(BUTTON_CALL_DOWN, f);
+    button_command = elev_get_button_signal(BUTTON_COMMAND,floor);
+    if (floor != N_FLOORS - 1) button_call_up = elev_get_button_signal(BUTTON_CALL_UP, floor);
+		if (floor != 0) button_call_down = elev_get_button_signal(BUTTON_CALL_DOWN, floor);
 
 
-	    //Setter tilsvarende bestillingslys
-	    if (button_command) elev_set_button_lamp(BUTTON_COMMAND,f,1);
-	    if (button_call_up) elev_set_button_lamp(BUTTON_CALL_UP,f,1);
-	    if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,f,1);
+    //Setter tilsvarende bestillingslys
+    if (button_command) elev_set_button_lamp(BUTTON_COMMAND,floor,1);
+    if (button_call_up) elev_set_button_lamp(BUTTON_CALL_UP,floor,1);
+    if (button_call_down) elev_set_button_lamp(BUTTON_CALL_DOWN,floor,1);
 
-	    //Finner bestillinger og oppdaterer køen
-	    if (queue_get(f) != ORDER_ALL) {
-
-		      if (button_command
-		      || (button_call_up && button_call_down)
-		      || (button_call_up && queue_get(f) == ORDER_DOWN)
-		      || (button_call_down && queue_get(f) == ORDER_UP)
-		      ) {
-		        queue_update(f,ORDER_ALL);
-		      }
-		      else if (button_call_up) queue_update(f, ORDER_UP);
-		      else if (button_call_down) queue_update(f, ORDER_DOWN);
-      }
-    }
+    if (button_command) queue_add(floor, ORDER_ALL);
+    if (button_call_up) queue_add(floor, ORDER_UP);
+    if (button_call_down) queue_add(floor, ORDER_DOWN);
+  }
 }
