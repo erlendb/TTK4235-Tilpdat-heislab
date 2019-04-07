@@ -5,9 +5,17 @@
 #include "state.h"
 #include "timer.h"
 
+#include <stdio.h>
+
 int stopped = NOT_STOPPED;
 
 state_t state_start(){
+  // Initialiserer heishardvaren
+  if (!elev_init()) {
+    printf("Unable to initialize elevator hardware!\n");
+    return 1;
+  }
+
 	//Initialiserer køen.
 	queue_clear();
 
@@ -111,6 +119,38 @@ state_t state_stay(){
 
 state_t state_stop() {
 	currentFloor = elev_get_floor_sensor_signal();
+  queue_clear();
+  lights_clear();
+	elev_set_stop_lamp(1);
+
+	//Stopp hvis heisen har fart
+  if (direction != DIRN_STOP) set_direction(DIRN_STOP);
+
+  //Åpner døra og start timer hvis vi er i en etasje
+  if (currentFloor != -1) {
+		timer_start();
+		door_open();
+	}
+
+  //Nødstopp deaktivert
+  if (!elev_get_stop_signal()) {
+    //Skrur av stopplys
+    elev_set_stop_lamp(0);
+
+    //Nellom to etasjer: gå til idle-state
+		//I en etasje: gå til stay-state
+    if (currentFloor == -1) {
+       return idle;
+    } else {
+      return stay;
+  	}
+	}
+
+	return stop;
+}
+/*
+state_t state_stop() {
+	currentFloor = elev_get_floor_sensor_signal();
     //Stop-state aktiveres ved nødstopp. Her skal køen slettes og nye bestillinger skal ikke tas hensyn til.
 
     //Stopper motor, setter stopplampa, resetter dørtimer og evt. åpner døra når vi går inn i nødstopp
@@ -163,4 +203,4 @@ state_t state_stop() {
     }
 
 	return stop;
-}
+}*/

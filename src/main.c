@@ -10,14 +10,6 @@
 #include "timer.h"
 
 int main() {
-  // Initialize hardware
-  if (!elev_init()) {
-    printf("Unable to initialize elevator hardware!\n");
-    return 1;
-  }
-
-  //Dørklokke
-  timer_deactivate();
 
   //KJør start-state
   state_t state = state_start();
@@ -26,9 +18,7 @@ int main() {
     //Greier som skal skje for hver iterasjon, uavhengig av state, utføres her
 
     //Ser etter stoppsignal. Går til stop-state hvis nødstopp aktiveres.
-    if (elev_get_stop_signal()) {
-      state = stop;
-    }
+    if (elev_get_stop_signal()) state = stop;
     if (state != stop) elev_set_stop_lamp(0);
 
     //Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
