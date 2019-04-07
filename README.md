@@ -1,13 +1,12 @@
 Heisdriveren skal i src/driver.
 
-For sal: elev.c/h, io.c/h, channels.h fra oppgavezipen
+Kompilatoren pleier å klage på at build/ og build/driver/ ikke finnes.
 
-For simulator: elev.c/h fra https://github.com/erlendb/simulatorheis_tilpdat
+På sal: bruk elev.c/h, io.c/h, channels.h fra oppgavezipen. io.c må legges til Makefila.
 
-io.c må legges til Makefila for å kompilere på sal.
-
+For simulator: bruk elev.c/h fra https://github.com/erlendb/simulatorheis_tilpdat
 
 
 Spørsmål til studass:
-* Skal obstruksjon påvirke døra?
-* Hvis heisen blir bestilt fra samme etasje som den er i, så blir den stående litt til. Så hvis noen gjør det mange ganger blir heisen stående der evig. Innafor?
+* Hvis et håpløst menneske står i samme etasje som heisen er i og bestiller heisen til den etasjen igjen og igjen, blir heisen stående der til evig tid. Kult/ukult?
+* Nødstopp -> Kjør mot bestilling motsatt retning av retningen før nødstopp -> Nødstopp -> Bestilling i samme retning som forrige bestilling: heisen tror den er et annet sted og går feil vei. Kult/ukult? Kan løses ved å lagre siste retning før nødstopp i tillegg til lastDirection.
