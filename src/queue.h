@@ -25,12 +25,13 @@ void queue_clear_all();
 */
 void queue_clear(int floor);
 
-/*! @brief Sjekker om vi skal stoppe i gitt etasje, med hensyn til retningen heisen er på vei i
+/*! @brief Sjekker om vi skal stoppe i gitt etasje med gitt retning på heisen
   * @param[in]  floor Etasjen vi skal sjekke om vi skal stoppe i
+  * @param[in]  direction Retningen vi skal sjekke om vi skal stoppe i
   *
   * @return Hvorvidt vi skal stoppe, 1 (stopp) eller 0 (ikke stopp).
   */
-int queue_stop(int floor);
+int queue_stop(int floor, int direction);
 
 /*! @brief Teller antall etasjer som har bestillinger
   *

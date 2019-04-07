@@ -32,14 +32,14 @@ int queue_count() {
 	return count;
 }
 
-int queue_stop(int floor) {
+int queue_stop(int floor, int direction) {
 	int order = queue[floor];
 
 	if (order == ORDER_ALL) return 1;
-	else if (currentDirection == DIRN_UP && order == ORDER_UP) return 1;
-	else if (currentDirection == DIRN_DOWN && order == ORDER_DOWN) return 1;
-	else if (currentDirection == DIRN_UP && order == ORDER_DOWN) return !queue_check_above(floor);
-	else if (currentDirection == DIRN_DOWN && order == ORDER_UP) return !queue_check_below(floor);
+	else if (direction == DIRN_UP && order == ORDER_UP) return 1;
+	else if (direction == DIRN_DOWN && order == ORDER_DOWN) return 1;
+	else if (direction == DIRN_UP && order == ORDER_DOWN) return !queue_check_above(floor);
+	else if (direction == DIRN_DOWN && order == ORDER_UP) return !queue_check_below(floor);
 	else return 0;
 }
 

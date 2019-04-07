@@ -42,7 +42,7 @@ state_t state_go() {
   	elev_set_floor_indicator(currentFloor);
   	lastFloor = currentFloor;
 
-    if (queue_stop(currentFloor)) {
+    if (queue_stop(currentFloor, currentDirection)) {
       return stay;
     } else {
       if (currentFloor == 0) elevator_set_direction(DIRN_UP);
