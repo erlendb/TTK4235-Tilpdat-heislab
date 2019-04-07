@@ -20,12 +20,11 @@ int main() {
     if (elev_get_stop_signal()) state = stop;
 
     //Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
-    //queue_check_buttons();
 
-    elevator_update_button_signals();
-    queue_update();
-    lights_update();
-
+    int buttonSignals[N_FLOORS][N_BUTTONS];
+    elevator_update_button_signals(buttonSignals);
+    queue_update(buttonSignals);
+    lights_update(buttonSignals);
 
     switch(state) {
     	case idle:

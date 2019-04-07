@@ -1,8 +1,6 @@
 #include "elevator.h"
 
-int buttonSignals[N_FLOORS][N_BUTTONS];
-
-void elevator_update_button_signals() {
+void elevator_update_button_signals(int buttonSignals[][N_BUTTONS]) {
   for (int floor = 0; floor < N_FLOORS; floor++) {
   	int button_command;
   	int button_call_up = 0;

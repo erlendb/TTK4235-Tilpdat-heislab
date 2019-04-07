@@ -83,7 +83,7 @@ void set_direction(elev_motor_direction_t dirn) {
 	direction = dirn;
 }
 
-void queue_update() {
+void queue_update(int buttonSignals[][N_BUTTONS]) {
 	for (int floor=0; floor < N_FLOORS; floor++) {
 		for (int button=0; button < N_BUTTONS; button++) {
 			if (buttonSignals[floor][button]) queue_add(floor, button);

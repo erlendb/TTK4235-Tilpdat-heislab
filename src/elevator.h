@@ -1,5 +1,3 @@
 #include "driver/elev.h"
 
-extern int buttonSignals[N_FLOORS][N_BUTTONS];
-
-void elevator_update_button_signals();
+void elevator_update_button_signals(int buttonSignals[][N_BUTTONS]);

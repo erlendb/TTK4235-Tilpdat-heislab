@@ -68,7 +68,7 @@ int queue_get(int floor);
   */
 void queue_check_buttons();
 
-void queue_update();
+void queue_update(int buttonSignals[][N_BUTTONS]);
 
 /*! @brief Sender motoren i riktig retning, og oppdaterer direction- og lastDirection-variabler.
   * @param[in] dirn Ny motorretning
