@@ -84,9 +84,7 @@ state_t state_stay(){
   //Resetter timeren (holder døra oppe litt til), skrur av lys og fjerner fra kø hvis det dukker opp bestillinger i samme etasje som vi står i
   if (queue_get(currentFloor) != -1) {
     timer_deactivate();
-  }
-  //Lukk døra og resett timeren etter 3 sekunder. Går til idle etterpå.
-  if (timer_check()) {
+  } else if (timer_check()) {
   	door_close();
     timer_deactivate();
   	return idle;

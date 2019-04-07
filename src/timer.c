@@ -1,5 +1,6 @@
 
 #include <time.h>
+#include <stdio.h>
 
 int doorTimer = -1;
 int timeLimit = 3;
@@ -9,6 +10,7 @@ void timer_start() {
 }
 
 int timer_check() {
+	//Muligens: if doorTimer == -1 return 0
 	return (time(NULL) - doorTimer > timeLimit);
 }
 
