@@ -118,32 +118,28 @@ state_t state_stay(){
 }
 
 state_t state_stop() {
-	currentFloor = elev_get_floor_sensor_signal();
+  if (direction != DIRN_STOP) set_direction(DIRN_STOP);
+
   queue_clear();
   lights_clear();
 	elev_set_stop_lamp(1);
 
-	//Stopp hvis heisen har fart
-  if (direction != DIRN_STOP) set_direction(DIRN_STOP);
+	currentFloor = elev_get_floor_sensor_signal();
 
-  //Åpner døra og start timer hvis vi er i en etasje
+  //Åpner døra hvis vi er i en etasje
   if (currentFloor != -1) {
-		timer_start();
 		door_open();
 	}
 
-  //Nødstopp deaktivert
-  if (!elev_get_stop_signal()) {
-    //Skrur av stopplys
-    elev_set_stop_lamp(0);
+	while (elev_get_stop_signal());
 
-    //Nellom to etasjer: gå til idle-state
-		//I en etasje: gå til stay-state
-    if (currentFloor == -1) {
-       return idle;
-    } else {
-      return stay;
-  	}
+	elev_set_stop_lamp(0);
+
+  if (currentFloor == -1) {
+     return idle;
+  } else {
+		timer_start();
+    return stay;
 	}
 
 	return stop;
