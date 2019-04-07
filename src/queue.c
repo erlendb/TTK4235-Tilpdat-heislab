@@ -4,17 +4,19 @@
 #include "queue.h"
 
 int lastFloor = -1;
-int currentFloor = -1;
 elev_motor_direction_t lastDirection = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
 elev_motor_direction_t direction = DIRN_STOP; // -1 = ned, 1 = opp, 0 = stopp
 int queue[N_FLOORS] = {0};
+
+void queue_print() {
+	printf("queue: %d %d %d %d\n", queue[0], queue[1], queue[2], queue[3]);
+}
 
 //Oppdaterer køen. Bør kanskje bytte navn til queue_set()
 void queue_update(int floor, int order) {
 	int queueValue = queue[floor];
 	if (order == -1){		//kan sette inn ingen bestilling når vi clearer etasjen
 		queue[floor] = -1;
-		//printf("ny qverdi %d for etasje %d",queue[floor], floor);
 	}
 	else if (queueValue == 0 || queueValue == 1){
 		if (queueValue != order) {
@@ -27,10 +29,14 @@ void queue_update(int floor, int order) {
 }
 
 //Sletter alle bestillinger i køen
-void queue_clear() {
+void queue_clear_all() {
 	for (int i=0;i<=3;i++) {
 		queue_update(i,-1);
 	}
+}
+
+void queue_clear(int floor) {
+	queue_update(floor, -1);
 }
 
 //Teller antall etasjer som har bestillinger
@@ -62,6 +68,7 @@ int queue_stop(int floor) {
 		return !queue_check_above(floor);
 	}
 	if (lastDirection == DIRN_DOWN && order == ORDER_UP) {
+		printf("\nq_stop c_below %d", queue_check_below(floor));
 		return !queue_check_below(floor);
 	}
 	// Ingen bestilling. Stopper ikke.

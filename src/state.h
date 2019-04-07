@@ -5,9 +5,6 @@
 //Heistilstander
 typedef enum states {idle, go, stay, stop} state_t;
 
-//Stoppflagg
-enum stops {NOT_STOPPED, STOPPED};
-
 int stopped;
 
 /*! @brief Kjører start-state

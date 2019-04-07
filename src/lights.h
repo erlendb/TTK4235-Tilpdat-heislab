@@ -4,4 +4,6 @@
 
 /*! @brief Skrur av alle bestillingslys
   */
-void lights_clear();
+void lights_clear(int floor);
+
+void lights_clear_all();

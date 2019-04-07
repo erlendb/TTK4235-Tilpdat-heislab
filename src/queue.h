@@ -3,7 +3,6 @@
   */
 
 extern int lastFloor;
-extern int currentFloor;
 extern elev_motor_direction_t lastDirection;
 extern elev_motor_direction_t direction;
 extern int queue[];
@@ -20,6 +19,8 @@ typedef enum orders {
 //Etasjer
 typedef enum floors {FIRST, SECOND, THIRD, FOURTH} floor_t;
 
+void queue_print();
+
 /*! @brief Oppdaterer køen ut fra ny bestilling og eksisterende bestillinger.
   * @details
       order = -1 (ingen bestilling) overskriver etasjen.
@@ -30,7 +31,10 @@ void queue_update(int floor, int order);
 
 /*! @brief Sletter alle bestillinger fra køen.
   */
-void queue_clear();
+void queue_clear_all();
+
+
+void queue_clear(int floor);
 
 /*! @brief Sjekker om vi skal stoppe i gitt etasje, med hensyn til retningen heisen er på vei i
   * @param[in]  floor Etasjen vi skal sjekke om vi skal stoppe i

@@ -11,20 +11,16 @@
 
 int main() {
 
-  //KJør start-state
+  //Initialiserer heisen
   state_t state = state_start();
 
   while(1) {
-    //Greier som skal skje for hver iterasjon, uavhengig av state, utføres her
-
     //Ser etter stoppsignal. Går til stop-state hvis nødstopp aktiveres.
     if (elev_get_stop_signal()) state = stop;
-    if (state != stop) elev_set_stop_lamp(0);
 
     //Itererer over alle knapper i alle etasjer for å tenne lykter og stappe bestillinger inn i køen
     queue_check_buttons();
 
-    //Tilstandsmaskin
     switch(state) {
     	case idle:
       	state = state_idle();
