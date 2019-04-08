@@ -2,11 +2,13 @@
   * @brief Køsystem
   */
 
+/*! Enum med ordre. Alle verdier bortsett fra ORDER_NONE samsvarer med verdiene fra tag_elev_lamp_type (elev.h).
+  */
 enum orders {
-	ORDER_NONE = -1,
-	ORDER_UP = BUTTON_CALL_UP,
-	ORDER_DOWN = BUTTON_CALL_DOWN,
-	ORDER_ALL = BUTTON_COMMAND
+	ORDER_NONE = -1,               ///< Ingen bestilling.
+	ORDER_UP = BUTTON_CALL_UP,     ///< Bestilling i oppoverretning.
+	ORDER_DOWN = BUTTON_CALL_DOWN, ///< Bestilling i nedoverretning.
+	ORDER_ALL = BUTTON_COMMAND     ///< Bestilling inni heisen eller bestilling i begge retninger.
 };
 
 /*! @brief      Oppdaterer køen ut fra ny bestilling og eksisterende bestillinger.

@@ -2,8 +2,14 @@
   * @brief Tilstandsmaskin med tilhørende greier
   */
 
-//Heistilstander
-typedef enum states {idle, go, stay, stop} state_t;
+/*! Enum med heistilstander
+  */
+typedef enum states {
+  idle, ///< Idle-state. Heisen venter på ny bestilling.
+  go,   ///< Go-state. Heisen kjører i retning av neste bestilling.
+  stay, ///< Stay-state. Heisen stopper i en etasje.
+  stop  ///< Stop-state. Nødstopp.
+} state_t;
 
 int stopped;
 

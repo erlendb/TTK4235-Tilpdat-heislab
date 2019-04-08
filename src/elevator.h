@@ -4,8 +4,22 @@
 
 #include "driver/elev.h"
 
+/*! Sist kjente etasje, utenom -1 (mellom to etasjer).
+  * Inneholder alltid en positiv etasjeverdi.
+  * Unntak: Blir initialisert til -1.
+  */
 extern int lastFloor;
+
+/*! Sist kjente kjøreretning for heisen, utenom DIRN_STOP.
+  * Inneholder alltid DIRN_UP eller DIRN_DOWN.
+  * Unntak: Blir initialisert til DIRN_STOP.
+  */
 extern elev_motor_direction_t lastDirection;
+
+/*! Nåværende kjøreretning for heisen, inkludert DIRN_STOP.
+  * Kan inneholde DIRN_STOP.
+  * Initialiseres til DIRN_STOP.
+  */
 extern elev_motor_direction_t currentDirection;
 
 /*! @brief Henter knappesignaler og oppdaterer array.
