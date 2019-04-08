@@ -1,5 +1,4 @@
 #include "driver/elev.h"
-#include "elevator.h"
 
 void lights_clear_all() {
   for (int floor = 0; floor < N_FLOORS; floor++) {

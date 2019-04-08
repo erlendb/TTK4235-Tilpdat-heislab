@@ -11,8 +11,6 @@ typedef enum states {
   stop  ///< Stop-state. Nødstopp.
 } state_t;
 
-int stopped;
-
 /*! @brief Kjører start-state
   * @details Kjører heisen ned til nærmeste etasje hvis heisen startes mellom to etasjer. Heisen blir stående hvis den startes i en etasje.
   *

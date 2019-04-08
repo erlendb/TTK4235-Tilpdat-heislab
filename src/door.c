@@ -1,4 +1,3 @@
-#include "door.h"
 #include "driver/elev.h"
 
 void door_open(){

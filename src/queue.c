@@ -2,7 +2,6 @@
 
 #include "driver/elev.h"
 #include "queue.h"
-#include "elevator.h"
 
 int queue[N_FLOORS] = {0};
 

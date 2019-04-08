@@ -1,6 +1,4 @@
-
 #include <time.h>
-#include <stdio.h>
 
 int doorTimer = -1;
 int timeLimit = 3;

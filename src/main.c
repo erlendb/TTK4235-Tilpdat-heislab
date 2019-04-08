@@ -1,17 +1,13 @@
-#include <stdio.h>
 #include <comedilib.h>
-#include <time.h>
 
 #include "driver/elev.h"
-#include "door.h"
 #include "queue.h"
 #include "lights.h"
 #include "state.h"
-#include "timer.h"
 #include "elevator.h"
 
 int main() {
-  
+
   state_t state = state_start();
 
   while(1) {
@@ -21,7 +17,7 @@ int main() {
     elevator_update_button_signals(buttonSignals);
     queue_update(buttonSignals);
     lights_update(buttonSignals);
-
+ 
     switch(state) {
     	case idle:
       	state = state_idle();
