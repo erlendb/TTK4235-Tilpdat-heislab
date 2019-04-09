@@ -5,10 +5,10 @@
 /*! Enum med heistilstander
   */
 typedef enum states {
-  idle, ///< Idle-state. Heisen venter på ny bestilling.
-  go,   ///< Go-state. Heisen kjører i retning av neste bestilling.
-  stay, ///< Stay-state. Heisen stopper i en etasje.
-  stop  ///< Stop-state. Nødstopp.
+  IDLE, ///< Idle-state. Heisen venter på ny bestilling.
+  GO,   ///< Go-state. Heisen kjører i retning av neste bestilling.
+  STAY, ///< Stay-state. Heisen stopper i en etasje.
+  STOP  ///< Stop-state. Nødstopp.
 } state_t;
 
 /*! @brief Kjører start-state

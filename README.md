@@ -51,12 +51,12 @@ States->Timer:timer_deactivate()
 States->Main:state = idle
 
 
-BETWEEN_FLOORS = -1
+x BETWEEN_FLOORS = -1
 Elevatormodul?
 ORDER = BUTTON
 queue_stop()
 queue_count()
-lastDirectionBeforeStop
+x LastDirectionBeforeStop
 states caps
 konsekvent state_t order_t button vs int
 timeLimit

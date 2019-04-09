@@ -4,6 +4,7 @@
 
 #include "driver/elev.h"
 
+#define BETWEEN_FLOORS -1
 /*! Sist kjente etasje, utenom -1 (mellom to etasjer).
   * Inneholder alltid en positiv etasjeverdi.
   * Unntak: Blir initialisert til -1.

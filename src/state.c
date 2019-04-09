@@ -13,28 +13,27 @@ elev_motor_direction_t lastDirectionBeforeStop = 0;
 state_t state_start() {
   if (!elev_init()) {
     printf("Beklager virkelig altså, men det ser ut til at heisen har fått influensa. Tror du må ta trappa i dag :(\n");
-    return 1;
+    return -1;
   }
 
 	queue_clear_all();
-
-	if (elev_get_floor_sensor_signal() == -1) elevator_set_direction(DIRN_DOWN);
-	while (elev_get_floor_sensor_signal() == -1);
+	if (elev_get_floor_sensor_signal() == BETWEEN_FLOORS) elevator_set_direction(DIRN_DOWN);
+	while (elev_get_floor_sensor_signal() == BETWEEN_FLOORS);
 	elevator_set_direction(DIRN_STOP);
 	elev_set_floor_indicator(elev_get_floor_sensor_signal());
 
-	return idle;
+	return IDLE;
 }
 
 state_t state_idle() {
-	if (queue_count()) return go;
-	else return idle;
+	if (queue_count()) return GO;
+	else return IDLE;
 }
 
 state_t state_go() {
 	int currentFloor = elev_get_floor_sensor_signal();
 
-  if (currentFloor == -1 && currentDirection == DIRN_STOP) {
+  if (currentFloor == BETWEEN_FLOORS && currentDirection == DIRN_STOP) {
     if (!lastDirectionBeforeStop) lastDirectionBeforeStop=lastDirection;
 
     //Vill algoritme som finner riktig retning for stuck heis:
@@ -42,15 +41,15 @@ state_t state_go() {
     else elevator_set_direction(DIRN_DOWN);
   }
 
-  if (currentFloor != -1) {
+  if (currentFloor != BETWEEN_FLOORS) {
   	elev_set_floor_indicator(currentFloor);
   	lastFloor = currentFloor;
 
     if (queue_stop(currentFloor, currentDirection)) {
-      return stay;
+      return STAY;
     } else {
       if (currentFloor == 0) elevator_set_direction(DIRN_UP);
-      else if (currentFloor == N_FLOORS-1) elevator_set_direction(DIRN_DOWN);
+      else if (currentFloor == N_FLOORS - 1) elevator_set_direction(DIRN_DOWN);
       else if (lastDirection == DIRN_UP && !queue_check_above(currentFloor)) elevator_set_direction(DIRN_DOWN);
       else if (lastDirection == DIRN_DOWN && !queue_check_below(currentFloor)) elevator_set_direction(DIRN_UP);
       else if (lastDirection == DIRN_STOP && queue_check_above(currentFloor)) elevator_set_direction(DIRN_UP);
@@ -58,7 +57,7 @@ state_t state_go() {
       else elevator_set_direction(lastDirection);
     }
   }
-	return go;
+	return GO;
 }
 
 state_t state_stay(){
@@ -78,9 +77,9 @@ state_t state_stay(){
   if (timer_check()) {
   	door_close();
     timer_deactivate();
-  	return idle;
+  	return IDLE;
   }
-	return stay;
+	return STAY;
 }
 
 state_t state_stop() {
@@ -92,12 +91,12 @@ state_t state_stop() {
 
 	int currentFloor = elev_get_floor_sensor_signal();
 
-  if (currentFloor != -1) door_open();
+  if (currentFloor != BETWEEN_FLOORS) door_open();
 
 	while (elev_get_stop_signal());
 
 	elev_set_stop_lamp(0);
 
-  if (currentFloor == -1) return idle;
-  else return stay;
+  if (currentFloor == BETWEEN_FLOORS) return IDLE;
+  else return STAY;
 }

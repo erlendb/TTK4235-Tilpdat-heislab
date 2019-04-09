@@ -9,9 +9,10 @@
 int main() {
 
   state_t state = state_start();
+  if (state == -1) return 0;
 
   while(1) {
-    if (elev_get_stop_signal()) state = stop;
+    if (elev_get_stop_signal()) state = STOP;
 
     int buttonSignals[N_FLOORS][N_BUTTONS];
     elevator_update_button_signals(buttonSignals);
@@ -19,19 +20,19 @@ int main() {
     lights_update(buttonSignals);
 
     switch(state) {
-    	case idle:
+    	case IDLE:
       	state = state_idle();
         break;
 
-    	case go:
+    	case GO:
 			  state = state_go();
 		    break;
 
-    	case stay:
+    	case STAY:
         state = state_stay();
 		    break;
 
-    	case stop:
+    	case STOP:
         state = state_stop();
 		    break;
     	}

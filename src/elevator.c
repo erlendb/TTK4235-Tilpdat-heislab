@@ -1,6 +1,6 @@
 #include "elevator.h"
 
-int lastFloor = -1;
+int lastFloor = BETWEEN_FLOORS;
 elev_motor_direction_t lastDirection = DIRN_STOP;
 elev_motor_direction_t currentDirection = DIRN_STOP;
 
