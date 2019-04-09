@@ -5,10 +5,17 @@
 /*! Enum med heistilstander
   */
 typedef enum states {
-  IDLE, ///< Idle-state. Heisen venter på ny bestilling.
-  GO,   ///< Go-state. Heisen kjører i retning av neste bestilling.
-  STAY, ///< Stay-state. Heisen stopper i en etasje.
-  STOP  ///< Stop-state. Nødstopp.
+  IDLE,
+
+  GO_ENTRY,
+  GO_INTERNAL,
+
+  STAY_ENTRY,
+  STAY_INTERNAL,
+  STAY_EXIT,
+
+  STOP_ENTRY,
+  STOP_INTERNAL,
 } state_t;
 
 /*! @brief Kjører start-state
@@ -23,25 +30,27 @@ state_t state_start();
   *
   * @return Neste state
   */
-state_t state_idle();
+state_t state_idle_internal();
 
 /*! @brief Kjører go-state.
   * @details Sender heisen i retning av neste bestilling. Stopper hvis vi kommer over en etasje med relevant bestilling.
   *
   * @return Neste state
   */
-state_t state_go();
-
+state_t state_go_internal();
+state_t state_go_entry();
 /*! @brief Kjører stay-state
   * @details Gjør det som skal gjøres når vi står i en etasje. Åpner og lukker døra.
   *
   * @return Neste state
   */
-state_t state_stay();
-
+state_t state_stay_internal();
+state_t state_stay_entry();
+state_t state_stay_exit();
 /*! @brief Kjører stop-state
   * @details Fikse alt som skal fikses ved nødstopp.
   *
   * @return Neste state
   */
-state_t state_stop();
+state_t state_stop_internal();
+state_t state_stop_entry();

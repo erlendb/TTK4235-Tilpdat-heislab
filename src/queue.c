@@ -2,6 +2,7 @@
 
 #include "driver/elev.h"
 #include "queue.h"
+#include "elevator.h"
 
 int queue[N_FLOORS] = {0};
 
@@ -34,7 +35,8 @@ int queue_count_orders() {
 int queue_should_stop(int floor, elev_motor_direction_t direction) {
 	order_t order = queue[floor];
 
-	if (order == ORDER_ALL) return 1;
+	if (floor == BETWEEN_FLOORS) return 0;
+	else if (order == ORDER_ALL) return 1;
 	else if (direction == DIRN_UP && order == ORDER_UP) return 1;
 	else if (direction == DIRN_DOWN && order == ORDER_DOWN) return 1;
 	else if (direction == DIRN_UP && order == ORDER_DOWN) return !queue_check_above(floor);

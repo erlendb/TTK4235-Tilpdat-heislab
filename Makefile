@@ -1,4 +1,4 @@
-SOURCES := driver/elev.c driver/io.c main.c elevator.c state.c queue.c lights.c door.c timer.c
+SOURCES := driver-simulator/elev.c main.c elevator.c state.c queue.c lights.c door.c timer.c
 
 BUILD_DIR := build
 OBJ := $(SOURCES:%.c=$(BUILD_DIR)/%.o)
