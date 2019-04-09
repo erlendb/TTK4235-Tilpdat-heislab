@@ -1,7 +1,8 @@
 #include <time.h>
 
+#define TIME_LIMIT 3
+
 int doorTimer = -1;
-int timeLimit = 3;
 
 void timer_start() {
 	doorTimer = time(NULL);
@@ -9,13 +10,13 @@ void timer_start() {
 
 int timer_check() {
 	if (doorTimer == -1) return 0;
-	else return (time(NULL) - doorTimer > timeLimit);
+	else return (time(NULL) - doorTimer > TIME_LIMIT);
 }
 
-void timer_deactivate() {
+void timer_clear() {
 	doorTimer = -1;
 }
 
-int timer_is_activated() {
+int timer_is_started() {
 	return (doorTimer != -1);
 }

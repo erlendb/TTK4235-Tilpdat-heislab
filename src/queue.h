@@ -4,19 +4,19 @@
 
 /*! Enum med ordre. Alle verdier bortsett fra ORDER_NONE samsvarer med verdiene fra tag_elev_lamp_type (elev.h).
   */
-enum orders {
+typedef enum orders {
 	ORDER_NONE = -1,               ///< Ingen bestilling.
 	ORDER_UP = BUTTON_CALL_UP,     ///< Bestilling i oppoverretning.
 	ORDER_DOWN = BUTTON_CALL_DOWN, ///< Bestilling i nedoverretning.
 	ORDER_ALL = BUTTON_COMMAND     ///< Bestilling inni heisen eller bestilling i begge retninger.
-};
+} order_t;
 
 /*! @brief      Oppdaterer køen ut fra ny bestilling og eksisterende bestillinger.
   * @details    order = -1 (ingen bestilling) overskriver etasjen.
   * @param[in]  floor Etasjen der bestillinger skal oppdateres.
   * @param[in]  order Den nye bestillingen i gitt etasje.
   */
-void queue_add(int floor, int order);
+void queue_add(int floor, order_t order);
 
 /*! @brief Sletter alle bestillinger fra køen.
   */
@@ -33,13 +33,13 @@ void queue_clear(int floor);
   *
   * @return Hvorvidt vi skal stoppe, 1 (stopp) eller 0 (ikke stopp).
   */
-int queue_stop(int floor, int direction);
+int queue_should_stop(int floor, elev_motor_direction_t direction);
 
 /*! @brief Teller antall etasjer som har bestillinger
   *
   * @return Antall etasjer med bestillinger.
   */
-int queue_count();
+int queue_count_orders();
 
 /*! @brief Sjekker hvorvidt det finnes bestillinger over gitt etasje
   * @param[in] floor Etasjen vi skal sjekke bestillinger over.
@@ -60,7 +60,7 @@ int queue_check_below(int floor);
   *
   * @return Bestillingsverdien for etasjen: NO_ORDER (ingen bestilling), ORDER_UP (bestilling oppover), ORDER_DOWN (bestilling nedover) eller ORDER_ALL (bestilling inni heisen eller bestilling i begge retninger).
   */
-int queue_get_order(int floor);
+order_t queue_get_order(int floor);
 
 /*! @brief Oppdaterer køen med bestillinger fra knappetrykkarray
   * @param[in] buttonSignals Array med nye knappetrykk

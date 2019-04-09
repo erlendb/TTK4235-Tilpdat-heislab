@@ -14,10 +14,10 @@ int timer_check();
 
 /*! @brief Deaktiverer klokka
 */
-void timer_deactivate();
+void timer_clear();
 
 /*! @brief Sjekker og returnerer hvorvidt klokka er aktivert
 *
 * @return Hvorvidt timeren er aktivert, 1 (ja) eller 0 (nei)
 */
-int timer_is_activated();
+int timer_is_started();

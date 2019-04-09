@@ -1,3 +1,5 @@
+= Heis Weiß =
+
 Heisdriveren skal i src/driver.
 
 Kompilatoren pleier å klage på at build/ og build/driver/ ikke finnes.
@@ -11,6 +13,27 @@ For simulator: bruk elev.c/h fra https://github.com/erlendb/simulatorheis_tilpda
 * Nødstopp -> Kjør mot bestilling motsatt retning av retningen før nødstopp -> Nødstopp -> Bestilling i samme retning som forrige bestilling: heisen tror den er et annet sted og går feil vei. Kult/ukult? Kan løses ved å lagre siste retning før nødstopp i tillegg til lastDirection.
 * Trøbbel i tårnet hvis man slenger inn bestilling i samme etasje som heisen står i, akkurat idet heisen er på vei bort derfra. Hvis man er uheldig så kjøres lights_clear() med floor=-1.
 
+spør ORDER = BUTTON?
+spør define alle konstante variabler?
+spør inn- og ut-states?
+timer_check()
+inn- og ut-states?
+x timer_is_activated() -> timer_is_started()
+x timer_deactivate() -> timer_clear()
+x timeLimit -> TIME_LIMIT
+x BETWEEN_FLOORS = -1
+x Elevatormodul?
+x ERROR_STATE
+x queue_stop() -> queue_should_stop()
+x lastDirectionBeforeStop
+x states caps
+x queue_count() -> queue_count_orders()
+- konsekvent state_t order_t button vs int
+- queue_add(floor, button)
+
+
+
+Sekvensdiagram
 
 title Heis Weiß
 
@@ -49,17 +72,3 @@ Timer->States:
 States->Door:door_close()
 States->Timer:timer_deactivate()
 States->Main:state = idle
-
-
-x BETWEEN_FLOORS = -1
-Elevatormodul?
-ORDER = BUTTON
-queue_stop()
-queue_count()
-x LastDirectionBeforeStop
-states caps
-konsekvent state_t order_t button vs int
-timeLimit
-timer_start vs _deactivate()
-timer_check()
-timer_is_activate()

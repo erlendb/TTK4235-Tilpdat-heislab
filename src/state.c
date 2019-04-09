@@ -6,6 +6,7 @@
 #include "timer.h"
 #include "elevator.h"
 
+#include <stdlib.h>
 #include <stdio.h>
 
 elev_motor_direction_t lastDirectionBeforeStop = 0;
@@ -13,7 +14,7 @@ elev_motor_direction_t lastDirectionBeforeStop = 0;
 state_t state_start() {
   if (!elev_init()) {
     printf("Beklager virkelig altså, men det ser ut til at heisen har fått influensa. Tror du må ta trappa i dag :(\n");
-    return -1;
+    exit(1);
   }
 
 	queue_clear_all();
@@ -26,7 +27,7 @@ state_t state_start() {
 }
 
 state_t state_idle() {
-	if (queue_count()) return GO;
+	if (queue_count_orders()) return GO;
 	else return IDLE;
 }
 
@@ -45,7 +46,7 @@ state_t state_go() {
   	elev_set_floor_indicator(currentFloor);
   	lastFloor = currentFloor;
 
-    if (queue_stop(currentFloor, currentDirection)) {
+    if (queue_should_stop(currentFloor, currentDirection)) {
       return STAY;
     } else {
       if (currentFloor == 0) elevator_set_direction(DIRN_UP);
@@ -64,7 +65,7 @@ state_t state_stay(){
 	int currentFloor = elev_get_floor_sensor_signal();
   if (lastDirectionBeforeStop) lastDirectionBeforeStop=0;
 
-	if (!timer_is_activated()) {
+	if (!timer_is_started()) {
     elevator_set_direction(DIRN_STOP);
     lights_clear(currentFloor);
     queue_clear(currentFloor);
@@ -72,21 +73,21 @@ state_t state_stay(){
     timer_start();
   }
 
-  if (queue_get_order(currentFloor) != ORDER_NONE) timer_deactivate();
+  if (queue_get_order(currentFloor) != ORDER_NONE) timer_clear();
 
   if (timer_check()) {
   	door_close();
-    timer_deactivate();
+    timer_clear();
   	return IDLE;
   }
-	return STAY;
+	return STAY; 
 }
 
 state_t state_stop() {
   elevator_set_direction(DIRN_STOP);
   queue_clear_all();
   lights_clear_all();
-  timer_deactivate();
+  timer_clear();
 	elev_set_stop_lamp(1);
 
 	int currentFloor = elev_get_floor_sensor_signal();
