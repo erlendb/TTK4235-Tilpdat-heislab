@@ -59,7 +59,8 @@ int queue_check_below(int floor) {
 }
 
 order_t queue_get_order(int floor) {
-	return queue[floor];
+	if (floor == BETWEEN_FLOORS) return ORDER_NONE;
+	else return queue[floor];
 }
 
 void queue_update(int buttonSignals[][N_BUTTONS]) {

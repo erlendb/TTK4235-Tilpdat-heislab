@@ -12,11 +12,3 @@ int timer_check() {
 	if (doorTimer == -1) return 0;
 	else return (time(NULL) - doorTimer > TIME_LIMIT);
 }
-
-void timer_clear() {
-	doorTimer = -1;
-}
-
-int timer_is_started() {
-	return (doorTimer != -1);
-}

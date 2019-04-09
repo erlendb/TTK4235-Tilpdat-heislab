@@ -26,8 +26,9 @@ state_t state_start() {
 	return IDLE;
 }
 
-state_t state_idle_internal() {
-	if (queue_count_orders()) return GO_ENTRY;
+state_t state_idle() {
+  if (queue_get_order(elev_get_floor_sensor_signal()) != ORDER_NONE) return STAY_ENTRY;
+	else if (queue_count_orders()) return GO_ENTRY;
 	else return IDLE;
 }
 
@@ -41,7 +42,6 @@ state_t state_go_entry() {
     if (queue_check_above(lastFloor-(lastDirectionBeforeStop==DIRN_DOWN))) elevator_set_direction(DIRN_UP);
     else elevator_set_direction(DIRN_DOWN);
   }
-
   else if (currentFloor != BETWEEN_FLOORS) {
     if (currentFloor == 0) elevator_set_direction(DIRN_UP);
     else if (currentFloor == N_FLOORS - 1) elevator_set_direction(DIRN_DOWN);
@@ -67,7 +67,6 @@ state_t state_stay_entry() {
 	int currentFloor = elev_get_floor_sensor_signal();
   if (lastDirectionBeforeStop) lastDirectionBeforeStop=0;
   elevator_set_direction(DIRN_STOP);
-  printf("state_stay_entry %d\n", currentFloor);
   lights_clear(currentFloor);
   queue_clear(currentFloor);
   door_open();
@@ -76,27 +75,24 @@ state_t state_stay_entry() {
 }
 state_t state_stay_internal(){
   int currentFloor = elev_get_floor_sensor_signal();
-  if (queue_get_order(currentFloor) != ORDER_NONE) timer_clear();
+  if (queue_get_order(currentFloor) != ORDER_NONE) return STAY_ENTRY;
   if (timer_check()) return STAY_EXIT;
 	else return STAY_INTERNAL;
 }
 state_t state_stay_exit() {
   door_close();
-  timer_clear();
   return IDLE;
 }
 
-state_t state_stop_entry() {
+state_t state_stop() {
   elevator_set_direction(DIRN_STOP);
   queue_clear_all();
   lights_clear_all();
-  timer_clear();
 	elev_set_stop_lamp(1);
   if (elev_get_floor_sensor_signal() != BETWEEN_FLOORS) door_open();
-  return STOP_INTERNAL;
-}
-state_t state_stop_internal() {
+
 	while (elev_get_stop_signal()) {};
+
   elev_set_stop_lamp(0);
   if (elev_get_floor_sensor_signal() == BETWEEN_FLOORS) return IDLE;
   else return STAY_ENTRY;

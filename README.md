@@ -1,4 +1,4 @@
-= Heis Weiß =
+# Heis Weiß
 
 Heisdriveren skal i src/driver.
 
@@ -8,10 +8,7 @@ På sal: bruk elev.c/h, io.c/h, channels.h fra oppgavezipen. io.c må legges til
 
 For simulator: bruk elev.c/h fra https://github.com/erlendb/simulatorheis_tilpdat
 
-
-* Hvis et håpløst menneske står i samme etasje som heisen er i og bestiller heisen til den etasjen igjen og igjen, blir heisen stående der til evig tid. Kult/ukult?
-* Nødstopp -> Kjør mot bestilling motsatt retning av retningen før nødstopp -> Nødstopp -> Bestilling i samme retning som forrige bestilling: heisen tror den er et annet sted og går feil vei. Kult/ukult? Kan løses ved å lagre siste retning før nødstopp i tillegg til lastDirection.
-* Trøbbel i tårnet hvis man slenger inn bestilling i samme etasje som heisen står i, akkurat idet heisen er på vei bort derfra. Hvis man er uheldig så kjøres lights_clear() med floor=-1.
+* (???) Trøbbel i tårnet hvis man slenger inn bestilling i samme etasje som heisen står i, akkurat idet heisen er på vei bort derfra. Hvis man er uheldig så kjøres lights_clear() med floor=-1.
 
 spør ORDER = BUTTON?
 spør define alle konstante variabler?

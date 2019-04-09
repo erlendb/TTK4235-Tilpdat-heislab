@@ -14,8 +14,7 @@ typedef enum states {
   STAY_INTERNAL,
   STAY_EXIT,
 
-  STOP_ENTRY,
-  STOP_INTERNAL,
+  STOP,
 } state_t;
 
 /*! @brief Kjører start-state
@@ -30,7 +29,7 @@ state_t state_start();
   *
   * @return Neste state
   */
-state_t state_idle_internal();
+state_t state_idle();
 
 /*! @brief Kjører go-state.
   * @details Sender heisen i retning av neste bestilling. Stopper hvis vi kommer over en etasje med relevant bestilling.
@@ -52,5 +51,4 @@ state_t state_stay_exit();
   *
   * @return Neste state
   */
-state_t state_stop_internal();
-state_t state_stop_entry();
+state_t state_stop();
