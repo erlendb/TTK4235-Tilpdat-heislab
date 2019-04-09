@@ -17,7 +17,7 @@ int main() {
     elevator_update_button_signals(buttonSignals);
     queue_update(buttonSignals);
     lights_update(buttonSignals);
- 
+
     switch(state) {
     	case idle:
       	state = state_idle();

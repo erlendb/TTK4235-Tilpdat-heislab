@@ -35,10 +35,10 @@ state_t state_go() {
 	int currentFloor = elev_get_floor_sensor_signal();
 
   if (currentFloor == -1 && currentDirection == DIRN_STOP) {
-    if (!stopDirectionBeforeStop) stopDirectionBeforeStop=lastDirection;
+    if (!lastDirectionBeforeStop) lastDirectionBeforeStop=lastDirection;
 
     //Vill algoritme som finner riktig retning for stuck heis:
-    if (queue_check_above(lastFloor-(stopDirection==DIRN_DOWN))) elevator_set_direction(DIRN_UP);
+    if (queue_check_above(lastFloor-(lastDirectionBeforeStop==DIRN_DOWN))) elevator_set_direction(DIRN_UP);
     else elevator_set_direction(DIRN_DOWN);
   }
 
@@ -63,7 +63,7 @@ state_t state_go() {
 
 state_t state_stay(){
 	int currentFloor = elev_get_floor_sensor_signal();
-  if (stopDirectionBeforeStop) stopDirectionBeforeStop=0;
+  if (lastDirectionBeforeStop) lastDirectionBeforeStop=0;
 
 	if (!timer_is_activated()) {
     elevator_set_direction(DIRN_STOP);
