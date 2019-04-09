@@ -26,6 +26,8 @@ x queue_count() -> queue_count_orders()
 - konsekvent state_t order_t button vs int
 - queue_add(floor, button)
 
+Fiks makefil til å opprette driver-mappe
+
 
 
 Sekvensdiagram
