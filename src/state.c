@@ -75,12 +75,12 @@ state_t state_stay(){
 
   if (queue_get_order(currentFloor) != ORDER_NONE) timer_clear();
 
-  if (timer_check()) {
+  if (timer_exceeds_limit()) {
   	door_close();
     timer_clear();
   	return IDLE;
   }
-	return STAY; 
+	return STAY;
 }
 
 state_t state_stop() {

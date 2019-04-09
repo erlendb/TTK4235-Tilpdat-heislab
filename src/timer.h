@@ -10,7 +10,7 @@ void timer_start();
 *
 * @return Hvorvidt vi har passert grensetiden, 1 (passert) eller 0 (ikke passert)
 */
-int timer_check();
+int timer_exceeds_limit();
 
 /*! @brief Deaktiverer klokka
 */

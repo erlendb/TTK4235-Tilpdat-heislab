@@ -8,7 +8,7 @@ void timer_start() {
 	doorTimer = time(NULL);
 }
 
-int timer_check() {
+int timer_exceeds_limit() {
 	if (doorTimer == -1) return 0;
 	else return (time(NULL) - doorTimer > TIME_LIMIT);
 }

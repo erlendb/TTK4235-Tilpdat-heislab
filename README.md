@@ -13,17 +13,12 @@ For simulator: bruk elev.c/h fra https://github.com/erlendb/simulatorheis_tilpda
 * Nødstopp -> Kjør mot bestilling motsatt retning av retningen før nødstopp -> Nødstopp -> Bestilling i samme retning som forrige bestilling: heisen tror den er et annet sted og går feil vei. Kult/ukult? Kan løses ved å lagre siste retning før nødstopp i tillegg til lastDirection.
 * Trøbbel i tårnet hvis man slenger inn bestilling i samme etasje som heisen står i, akkurat idet heisen er på vei bort derfra. Hvis man er uheldig så kjøres lights_clear() med floor=-1.
 
-spør ORDER = BUTTON?
-spør define alle konstante variabler?
-spør inn- og ut-states?
+
 timer_check()
-inn- og ut-states?
 x timer_is_activated() -> timer_is_started()
 x timer_deactivate() -> timer_clear()
 x timeLimit -> TIME_LIMIT
 x BETWEEN_FLOORS = -1
-x Elevatormodul?
-x ERROR_STATE
 x queue_stop() -> queue_should_stop()
 x lastDirectionBeforeStop
 x states caps
