@@ -1,5 +1,32 @@
 # Heis Weiß
 
+## Masterbranch
+
+Testet og funker på sal.
+
+Tilstandsmaskin med tilstandene idle, go, stay, stop.
+
+## Entry-exit-states-branch
+
+Testet og funker i simulator.
+
+Samme tilstander som tidligere, i tillegg til eventuelle inn- og ut-tilstander:
+
+* idle (ingen inn- eller ut-tilstander)
+* go
+  * go_entry
+  * go_internal
+* stay
+  * stay_entry
+  * stay_internal
+  * stay_exit
+* stop (ingen inn- eller ut-tilstander)
+
+Inn- og ut-tilstandene kjører kun én gang, henholdsvis før og etter tilstandsmaskinen havner i tilhørende interntilstand. Interntilstanden kjører i løkke.
+
+
+---
+
 Heisdriveren skal i src/driver.
 
 Kompilatoren pleier å klage på at build/ og build/driver/ ikke finnes.

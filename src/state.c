@@ -53,6 +53,7 @@ state_t state_go_entry() {
   }
   return GO_INTERNAL;
 }
+
 state_t state_go_internal() {
   int currentFloor = elev_get_floor_sensor_signal();
   if (currentFloor != BETWEEN_FLOORS) {
@@ -73,12 +74,14 @@ state_t state_stay_entry() {
   timer_start();
   return STAY_INTERNAL;
 }
+
 state_t state_stay_internal(){
   int currentFloor = elev_get_floor_sensor_signal();
   if (queue_get_order(currentFloor) != ORDER_NONE) return STAY_ENTRY;
   if (timer_check()) return STAY_EXIT;
 	else return STAY_INTERNAL;
 }
+
 state_t state_stay_exit() {
   door_close();
   return IDLE;
