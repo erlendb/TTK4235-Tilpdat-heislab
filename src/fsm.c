@@ -63,9 +63,11 @@ void fsm_state_go() {
 
     case INTERNAL:
       update_current_floor();
-      if (currentFloor != BETWEEN_FLOORS && currentFloor != lastFloor) {
-        elev_set_floor_indicator(currentFloor);
-        lastFloor = currentFloor;
+      if (currentFloor != BETWEEN_FLOORS) {
+        if (currentFloor != lastFloor) {
+          elev_set_floor_indicator(currentFloor);
+          lastFloor = currentFloor;
+        }
         if (queue_should_stop(currentFloor, currentDirection)) fsm_transition(STAY, ENTRY);
       }
     break;
