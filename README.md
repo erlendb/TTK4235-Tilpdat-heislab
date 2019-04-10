@@ -1,62 +1,51 @@
 # Heis Weiß
 
-## Masterbranch
 
-Testet og funker på sal.
+## Heis utgave 1
 
-Tilstandsmaskin med tilstandene idle, go, stay, stop.
+Siste versjon har tag v3. Testet og fungerer på sal.
 
-## Entry-exit-states-branch
-
-Testet og funker i simulator.
-
-Samme tilstander som tidligere, i tillegg til eventuelle inn- og ut-tilstander:
-
-* idle (ingen inn- eller ut-tilstander)
-* go
-  * go_entry
-  * go_internal
-* stay
-  * stay_entry
-  * stay_internal
-  * stay_exit
-* stop (ingen inn- eller ut-tilstander)
-
-Inn- og ut-tilstandene kjører kun én gang, henholdsvis før og etter tilstandsmaskinen havner i tilhørende interntilstand. Interntilstanden kjører i løkke.
+Tilstandsmaskin med tilstander idle, go, stay, stop.
 
 
----
+## Heis utgave 2
+
+Ligger i masterbranchen. Testet og funker i simulator.
+
+Optimalisert for minst mulig skriving til og lesing fra hardvaren/simulatoren.
+
+Tilstandsmaskin med spesifiserte inn- og ut-aktiviteter, altså oppgaver som skal utføres på vei inn til eller på vei ut av en tilstand.
+
+Inn- og ut-delene kjører kun én gang, henholdsvis før og etter tilstandsmaskinen havner i tilhørende interntilstand. Interntilstanden kjører i løkke inntil vi skal videre til neste tilstand.
+
+Tilstandsmaskinen er bygget opp som følger:
+
+* start (Initialisering av heisen, utføres én gang)
+* idle (Vent på ny bestilling, deretter gå til riktig tilstand. Ingen inn- eller ut-aktiviteter)
+* go (Bestem retning og kjør mot en bestilling)
+  * entry (På vei inn til go-tilstanden)
+  * internal (Selve go-tilstanden)
+* stay (Heisen har stoppet i en etasje for å utføre en bestilling)
+  * entry (På vei inn til stay-tilstanden)
+  * internal (Selve stay-tilstanden)
+  * exit (På vei ut av stay-tilstanden)
+* stop (Nødstopp. Ingen inn- eller ut-tilstander)
+
+
+## Ymse
 
 Heisdriveren skal i src/driver.
 
 Kompilatoren pleier å klage på at build/ og build/driver/ ikke finnes.
 
-På sal: bruk elev.c/h, io.c/h, channels.h fra oppgavezipen. io.c må legges til Makefila.
+På sal: bruk elev.c/h, io.c/h, channels.h i driver-sal/ (fra oppgavezipen). io.c må legges til Makefila.
 
-For simulator: bruk elev.c/h fra https://github.com/erlendb/simulatorheis_tilpdat
-
-* (???) Trøbbel i tårnet hvis man slenger inn bestilling i samme etasje som heisen står i, akkurat idet heisen er på vei bort derfra. Hvis man er uheldig så kjøres lights_clear() med floor=-1.
-
-spør ORDER = BUTTON?
-spør define alle konstante variabler?
-spør inn- og ut-states?
-timer_check()
-inn- og ut-states?
-x timer_is_activated() -> timer_is_started()
-x timer_deactivate() -> timer_clear()
-x timeLimit -> TIME_LIMIT
-x BETWEEN_FLOORS = -1
-x Elevatormodul?
-x ERROR_STATE
-x queue_stop() -> queue_should_stop()
-x lastDirectionBeforeStop
-x states caps
-x queue_count() -> queue_count_orders()
-- konsekvent state_t order_t button vs int
-- queue_add(floor, button)
+For simulator: bruk elev.c/h i driver-sim/ (fra https://github.com/erlendb/simulatorheis_tilpdat). io.c må fjernes fra Makefila.
 
 
+## Bør kanskje fikses
 
-misbruk av notasjon lastDirectionBeforeStop
-go-internal etter optimalisering: leter kun etter bestilling idet heisen ankommer etasje. Om noen bestiller heisen mens den er på vei gjennom etasjen vil den ikke stoppe.
-queue_count_orders()->queue_any_orders()
+* Misbruk av notasjon i lastDirectionBeforeStop
+* go-internal etter optimalisering: leter kun etter bestilling idet heisen ankommer etasje. Om noen bestiller heisen mens den er på vei gjennom etasjen vil den ikke stoppe. Bra? Problem? Vet ikke helt.
+* Alltid loope over knapper, ikke tre linjer
+* Endre køsystemet fra array med én dimensjon til to dimensjoner med alle knapper representert? Kan potensielt gjøre at programmet itererer gjennom bestillinger/knappetrykk færre ganger, og at vi slipper å lagre knappetrykk, lamper og kø i tre forskjellige arrayer.
