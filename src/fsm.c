@@ -9,10 +9,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-state_t nextState = IDLE;
-state_t get_next_state() { return nextState; }
+static state_t nextState = IDLE;
+static state_action stateAction = ENTRY;
 
-state_action stateAction = ENTRY;
+state_t get_next_state() {
+  return nextState;
+}
+
 
 void fsm_transition(state_t state, state_action action) {
   nextState = state;

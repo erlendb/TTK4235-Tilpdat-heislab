@@ -63,10 +63,10 @@ order_t queue_get_order(int floor) {
 	else return queue[floor];
 }
 
-void queue_update(int buttonSignals[][N_BUTTONS]) {
+void queue_update() {
 	for (int floor=0; floor < N_FLOORS; floor++) {
 		for (int button=0; button < N_BUTTONS; button++) {
-			if (buttonSignals[floor][button]) queue_add(floor, button);
+			if (elevator_get_button_signal(floor, button)) queue_add(floor, button);
 		}
 	}
 }

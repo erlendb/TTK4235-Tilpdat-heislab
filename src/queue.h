@@ -65,4 +65,4 @@ order_t queue_get_order(int floor);
 /*! @brief Oppdaterer køen med bestillinger fra knappetrykkarray
   * @param[in] buttonSignals Array med nye knappetrykk
   */
-void queue_update(int buttonSignals[][N_BUTTONS]);
+void queue_update();

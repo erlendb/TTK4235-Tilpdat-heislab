@@ -1,4 +1,5 @@
 #include "driver/elev.h"
+#include "elevator.h"
 
 void lights_clear_all() {
   for (int floor = 0; floor < N_FLOORS; floor++) {
@@ -14,10 +15,10 @@ void lights_clear(int floor) {
   if (floor != 0) elev_set_button_lamp(BUTTON_CALL_DOWN, floor, 0);
 }
 
-void lights_update(int buttonSignals[][N_BUTTONS]) {
+void lights_update() {
 	for (int floor=0; floor < N_FLOORS; floor++) {
 		for (int button=0; button < N_BUTTONS; button++) {
-			if (buttonSignals[floor][button]) elev_set_button_lamp(button, floor, 1);
+			if (elevator_get_button_signal(floor, button)) elev_set_button_lamp(button, floor, 1);
 		}
 	}
 }

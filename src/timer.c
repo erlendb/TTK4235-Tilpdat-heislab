@@ -2,7 +2,7 @@
 
 #define TIME_LIMIT 3
 
-int doorTimer = -1;
+static int doorTimer = -1;
 
 void timer_start() {
 	doorTimer = time(NULL);

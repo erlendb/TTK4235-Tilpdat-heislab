@@ -14,4 +14,4 @@ void lights_clear_all();
 /*! @brief Oppdaterer bestillingslys i henhold til innhentede knappetrykksignaler
   * @param[in] buttonSignals Array med knappesignaler
   */
-void lights_update(int buttonSignals[][N_BUTTONS]);
+void lights_update();
