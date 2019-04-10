@@ -10,21 +10,25 @@
   * Inneholder alltid en positiv etasjeverdi.
   * Unntak: Blir initialisert til -1.
   */
-extern int lastFloor;
+int get_last_floor();
+void set_last_floor(int floor);
 
-extern int currentFloor;
+int get_current_floor();
+void set_current_floor(int floor);
 
 /*! Sist kjente kjøreretning for heisen, utenom DIRN_STOP.
   * Inneholder alltid DIRN_UP eller DIRN_DOWN.
   * Unntak: Blir initialisert til DIRN_STOP.
   */
-extern elev_motor_direction_t lastDirection;
+elev_motor_direction_t get_last_direction();
+void set_last_direction(elev_motor_direction_t dirn);
 
 /*! Nåværende kjøreretning for heisen, inkludert DIRN_STOP.
   * Kan inneholde DIRN_STOP.
   * Initialiseres til DIRN_STOP.
   */
-extern elev_motor_direction_t currentDirection;
+elev_motor_direction_t get_current_direction();
+void set_current_direction(elev_motor_direction_t dirn);
 
 /*! @brief Henter knappesignaler og oppdaterer array.
   * @param[out] buttonSignals Knappetrykksignalene lagres her.

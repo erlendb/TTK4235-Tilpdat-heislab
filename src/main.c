@@ -18,7 +18,7 @@ int main() {
     queue_update(buttonSignals);
     lights_update(buttonSignals);
 
-    currentFloor = elev_get_floor_sensor_signal();
+    set_current_floor(elev_get_floor_sensor_signal());
 
     switch(get_next_state()) {
     	case IDLE:
