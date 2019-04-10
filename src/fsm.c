@@ -10,18 +10,18 @@
 #include <stdio.h>
 
 static state_t nextState = IDLE;
-static state_action stateAction = ENTRY;
+static state_action_t nextAction = ENTRY;
 
 state_t get_next_state() {
   return nextState;
 }
 
-void fsm_transition(state_t state, state_action action) {
+void fsm_transition(state_t state, state_action_t action) {
   nextState = state;
-  stateAction = action;
+  nextAction = action;
 }
 
-void fsm_state_start() {
+void fsm_state_initialize() {
   if (!elev_init()) {
     printf("Beklager virkelig altså, men det ser ut til at heisen har fått influensa. Tror du må ta trappa i dag :(\n");
     exit(1);
@@ -39,11 +39,11 @@ void fsm_state_start() {
 
 void fsm_state_idle() {
   if (queue_get_order(currentFloor) != ORDER_NONE) fsm_transition(STAY, ENTRY);
-	else if (queue_any_orders()) fsm_transition(GO, ENTRY);
+	else if (queue_check_all_floors()) fsm_transition(GO, ENTRY);
 }
 
 void fsm_state_go() {
-  switch(stateAction) {
+  switch(nextAction) {
     case ENTRY:
       if (currentFloor == BETWEEN_FLOORS && currentDirection == DIRN_STOP) {
         if (lastDirectionBeforeStop == DIRN_STOP) lastDirectionBeforeStop = lastDirection;
@@ -79,19 +79,19 @@ void fsm_state_go() {
 }
 
 void fsm_state_stay() {
-  switch (stateAction) {
+  switch (nextAction) {
     case ENTRY:
       elevator_set_direction(DIRN_STOP);
-      lights_clear(currentFloor);
-      queue_clear(currentFloor);
+      lights_clear_floor(currentFloor);
+      queue_clear_floor(currentFloor);
       door_open();
       timer_start();
       fsm_transition(STAY, INTERNAL);
 
     case INTERNAL:
       if (queue_get_order(currentFloor) != ORDER_NONE) {
-        lights_clear(currentFloor);
-        queue_clear(currentFloor);
+        lights_clear_floor(currentFloor);
+        queue_clear_floor(currentFloor);
         timer_start();
       }
       else if (timer_expired()) fsm_transition(STAY, EXIT);
@@ -103,7 +103,7 @@ void fsm_state_stay() {
   }
 }
 
-void fsm_state_stop() {
+void fsm_state_emergency() {
   elevator_set_direction(DIRN_STOP);
   queue_clear_all();
   lights_clear_all();

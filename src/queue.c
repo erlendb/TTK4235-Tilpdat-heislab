@@ -6,7 +6,7 @@
 
 int queue[N_FLOORS] = {0};
 
-void queue_add(int floor, order_t order) {
+void queue_add_order(int floor, order_t order) {
 	order_t oldOrder = queue[floor];
 
 	if (order == ORDER_NONE) queue[floor] = ORDER_NONE;
@@ -15,18 +15,18 @@ void queue_add(int floor, order_t order) {
 }
 
 void queue_clear_all() {
-	for (int i = 0; i < N_FLOORS; i++) {
-		queue_add(i, ORDER_NONE);
+	for (int floor = 0; floor < N_FLOORS; floor++) {
+		queue_add_order(floor, ORDER_NONE);
 	}
 }
 
-void queue_clear(int floor) {
-	queue_add(floor, ORDER_NONE);
+void queue_clear_floor(int floor) {
+	queue_add_order(floor, ORDER_NONE);
 }
 
-int queue_any_orders() {
-	for (int i = 0; i < N_FLOORS; i++) {
-		if (queue[i] != ORDER_NONE) return 1;
+int queue_check_all_floors() {
+	for (int floor = 0; floor < N_FLOORS; floor++) {
+		if (queue[floor] != ORDER_NONE) return 1;
 	}
 	return 0;
 }
@@ -62,10 +62,10 @@ order_t queue_get_order(int floor) {
 	else return queue[floor];
 }
 
-void queue_update() {
+void queue_update_from_button_signals() {
 	for (int floor=0; floor < N_FLOORS; floor++) {
 		for (int button=0; button < N_BUTTONS; button++) {
-			if (elevator_get_button_signal(floor, button)) queue_add(floor, button);
+			if (elevator_get_button_signal(floor, button)) queue_add_order(floor, button);
 		}
 	}
 }

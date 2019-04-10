@@ -10,9 +10,9 @@ void lights_clear_all();
   *
   * @param[in] Etasje der lysene skal skrues av
   */
-void lights_clear(int floor);
+void lights_clear_floor(int floor);
 
 /** @brief Oppdaterer bestillingslys ut fra nye knappetrykkarray i elevator-modulen.
   * Nytter elevator_get_button_signal(), og skrur på nye lys dersom det har kommet en ny bestilling.
   */
-void lights_update();
+void lights_update_from_button_signals();

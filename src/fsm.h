@@ -25,7 +25,7 @@ typedef enum state_actions {
   ENTRY,    ///< ENTRY-action utføres på vei inn i en ny tilstand.
   INTERNAL, ///< INTERNAL-action utføres gjentatte ganger så lenge vi holder oss i en tilstand.
   EXIT,     ///< EXIT-action utføres på vei ut av en tilstand.
-} state_action;
+} state_action_t;
 
 /** @brief Henter den neste tilstanden tilstandsmaskinen skal inn i
   *
@@ -38,14 +38,14 @@ state_t get_next_state();
   * @param[in] state Neste tilstand
   * @param[in] action Neste action
   */
-void fsm_transition(state_t state, state_action action);
+void fsm_transition(state_t state, state_action_t action);
 
 /** @brief Kjører start-tilstand
   *
   * Kjører heisen ned til nærmeste etasje hvis heisen startes mellom to etasjer. Heisen blir stående hvis den startes i en etasje.
   * Går deretter til idle-tilstand.
   */
-void fsm_state_start();
+void fsm_state_initialize();
 
 /** @brief Kjører idle-tilstand.
   *
@@ -71,4 +71,4 @@ void fsm_state_stay();
   *
   * Fikser alt som skal fikses ved nødstopp.
   */
-void fsm_state_stop();
+void fsm_state_emergency();

@@ -8,14 +8,14 @@
 
 int main() {
 
-  fsm_state_start();
+  fsm_state_initialize();
 
   while(1) {
     if (elev_get_stop_signal()) fsm_transition(STOP, ENTRY);
 
-    elevator_update_button_signals();
-    queue_update();
-    lights_update();
+    elevator_fetch_button_signals();
+    queue_update_from_button_signals();
+    lights_update_from_button_signals();
 
     switch(get_next_state()) {
     	case IDLE:
@@ -28,7 +28,7 @@ int main() {
       	fsm_state_stay();
         break;
     	case STOP:
-      	fsm_state_stop();
+      	fsm_state_emergency();
         break;
   	}
 	}

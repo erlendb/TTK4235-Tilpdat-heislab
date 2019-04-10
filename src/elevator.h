@@ -46,7 +46,7 @@ void update_current_floor();
 
 /** @brief Henter knappesignaler fra heisdriveren og oppdaterer lokalt array.
   */
-void elevator_update_button_signals();
+void elevator_fetch_button_signals();
 
 /** @brief Sender motoren i gitt retning, og oppdaterer globale currentDirection og lastDirection.
   *

@@ -12,7 +12,7 @@ void update_current_floor() {
   currentFloor = elev_get_floor_sensor_signal();
 }
 
-void elevator_update_button_signals() {
+void elevator_fetch_button_signals() {
   for (int floor = 0; floor < N_FLOORS; floor++) {
     for (int button = 0; button < N_BUTTONS; button++) {
       if (!(floor == N_FLOORS - 1 && button == BUTTON_CALL_UP) && !(floor == 0 && button == BUTTON_CALL_DOWN)) buttonSignals[floor][button] = elev_get_button_signal(button,floor);

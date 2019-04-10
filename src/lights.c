@@ -3,7 +3,7 @@
 
 int lights[N_FLOORS][N_BUTTONS] = {0};
 
-void lights_clear(int floor) {
+void lights_clear_floor(int floor) {
   for (int button = 0; button < N_BUTTONS; button++) {
     if (lights[floor][button] == 1) {
       lights[floor][button] = 0;
@@ -14,11 +14,11 @@ void lights_clear(int floor) {
 
 void lights_clear_all() {
   for (int floor = 0; floor < N_FLOORS; floor++) {
-    lights_clear(floor);
+    lights_clear_floor(floor);
   }
 }
 
-void lights_update() {
+void lights_update_from_button_signals() {
 	for (int floor=0; floor < N_FLOORS; floor++) {
 		for (int button=0; button < N_BUTTONS; button++) {
 			if (elevator_get_button_signal(floor, button) && lights[floor][button] == 0) {

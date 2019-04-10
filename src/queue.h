@@ -16,7 +16,7 @@ typedef enum orders {
   * @param[in]  floor Etasjen der bestillinger skal oppdateres.
   * @param[in]  order Den nye bestillingen i gitt etasje.
   */
-void queue_add(int floor, order_t order);
+void queue_add_order(int floor, order_t order);
 
 /** @brief Sletter alle bestillinger fra køen.
   */
@@ -25,7 +25,7 @@ void queue_clear_all();
 /** @brief Sletter alle bestillinger i gitt etasje
   * @param[in] floor Etasjen bestillinger skal slettes fra
 */
-void queue_clear(int floor);
+void queue_clear_floor(int floor);
 
 /** @brief Sjekker om vi skal stoppe i gitt etasje med gitt retning på heisen
   * @param[in]  floor Etasjen vi skal sjekke om vi skal stoppe i
@@ -39,7 +39,7 @@ int queue_should_stop(int floor, elev_motor_direction_t direction);
   *
   * @return Hvorvidt det finnes bestillinger i køen (ja/nei, 1/0).
   */
-int queue_any_orders();
+int queue_check_all_floors();
 
 /** @brief Sjekker hvorvidt det finnes bestillinger over gitt etasje
   * @param[in] floor Etasjen vi skal sjekke bestillinger over.
@@ -66,4 +66,4 @@ order_t queue_get_order(int floor);
 	*
   * @param[in] buttonSignals Array med nye knappetrykk
   */
-void queue_update();
+void queue_update_from_button_signals();
