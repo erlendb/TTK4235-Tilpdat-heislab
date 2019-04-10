@@ -64,6 +64,7 @@ void fsm_state_go() {
     case INTERNAL:
       update_current_floor();
       if (currentFloor != BETWEEN_FLOORS) {
+        lastDirectionBeforeStop = DIRN_STOP;
         if (currentFloor != lastFloor) {
           elev_set_floor_indicator(currentFloor);
           lastFloor = currentFloor;
@@ -80,7 +81,6 @@ void fsm_state_go() {
 void fsm_state_stay() {
   switch (stateAction) {
     case ENTRY:
-      lastDirectionBeforeStop = DIRN_STOP;
       elevator_set_direction(DIRN_STOP);
       lights_clear(currentFloor);
       queue_clear(currentFloor);

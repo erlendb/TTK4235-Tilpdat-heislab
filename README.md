@@ -47,7 +47,5 @@ For simulator: bruk elev.c/h i driver-sim/ (fra https://github.com/erlendb/simul
 
 * Misbruk av notasjon i lastDirectionBeforeStop
 * go-internal etter optimalisering: leter kun etter bestilling idet heisen ankommer etasje. Om noen bestiller heisen mens den er på vei gjennom etasjen vil den ikke stoppe. Bra? Problem? Vet ikke helt. Fort gjort å fikse,
-* Alltid loope over knapper, ikke tre linjer
 * Endre køsystemet fra array med én dimensjon til to dimensjoner med alle knapper representert? Kan potensielt gjøre at programmet itererer gjennom bestillinger/knappetrykk færre ganger, og at vi slipper å lagre knappetrykk, lamper og kø i tre forskjellige arrayer.
-* lastDirectionBeforeStop resettes ikke før heisen STOPPER i en etasje..?
 * Dokumentere #define?
