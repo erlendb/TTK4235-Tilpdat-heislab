@@ -3,7 +3,7 @@
 #include "driver/elev.h"
 #include "queue.h"
 #include "lights.h"
-#include "state.h"
+#include "fsm.h"
 #include "elevator.h"
 
 int main() {

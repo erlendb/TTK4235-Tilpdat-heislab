@@ -57,42 +57,4 @@ x queue_count() -> queue_count_orders()
 
 
 
-Sekvensdiagram
-
-title Heis Weiß
-
-Main->States:state_idle()
-States->Queue:queue_count()
-Queue->States:count
-States->Main:state=idle
-Main->Elevator:elevator_update_button_signals()
-Main->Queue:queue_update()
-Main->Lights:lights_update()
-Main->States:state_idle()
-States->Queue:queue_count()
-Queue->States:count
-States->Main:state = go
-Main->States:state_go()
-States->Driver:elev_get_floor_sensor_signal()
-Driver->States:floor
-States->Elevator:elevator_set_direction()
-States->Driver:elev_set_floor_indicator()
-States->Queue:queue_stop()
-Queue->States:shouldStop
-States->Main:state = stay
-Main->States:go_stay()
-States->Driver:getFloor()
-Driver->States:floor
-States->Timer:is_timer_activated()
-Timer->States:is_timer_activated
-States->Lights:lights_clear()
-States->Queue:queue_clear()
-States->Door:door_open()
-States->Timer:timer_start()
-States->Queue:queue_get_order(
-Queue->States:
-States->Timer:timer_check()
-Timer->States:
-States->Door:door_close()
-States->Timer:timer_deactivate()
-States->Main:state = idle
+misbruk av notasjon lastDirectionBeforeStop
