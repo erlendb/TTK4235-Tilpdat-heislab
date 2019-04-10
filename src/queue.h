@@ -39,7 +39,7 @@ int queue_should_stop(int floor, elev_motor_direction_t direction);
   *
   * @return Antall etasjer med bestillinger.
   */
-int queue_count_orders();
+int queue_any_orders();
 
 /*! @brief Sjekker hvorvidt det finnes bestillinger over gitt etasje
   * @param[in] floor Etasjen vi skal sjekke bestillinger over.

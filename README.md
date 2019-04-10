@@ -58,3 +58,5 @@ x queue_count() -> queue_count_orders()
 
 
 misbruk av notasjon lastDirectionBeforeStop
+go-internal etter optimalisering: leter kun etter bestilling idet heisen ankommer etasje. Om noen bestiller heisen mens den er på vei gjennom etasjen vil den ikke stoppe.
+queue_count_orders()->queue_any_orders()

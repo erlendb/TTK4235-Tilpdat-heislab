@@ -14,11 +14,9 @@ void update_current_floor() {
 
 void elevator_update_button_signals() {
   for (int floor = 0; floor < N_FLOORS; floor++) {
-    buttonSignals[floor][BUTTON_COMMAND] = elev_get_button_signal(BUTTON_COMMAND,floor);
-    if (floor == N_FLOORS - 1) buttonSignals[floor][BUTTON_CALL_UP] = 0;
-    else buttonSignals[floor][BUTTON_CALL_UP] = elev_get_button_signal(BUTTON_CALL_UP, floor);
-  	if (floor == 0) buttonSignals[floor][BUTTON_CALL_DOWN] = 0;
-    else buttonSignals[floor][BUTTON_CALL_DOWN] = elev_get_button_signal(BUTTON_CALL_DOWN, floor);
+    for (int button = 0; button < N_BUTTONS; button++) {
+      if (!(floor == N_FLOORS - 1 && button == BUTTON_CALL_UP) && !(floor == 0 && button == BUTTON_CALL_DOWN)) buttonSignals[floor][button] = elev_get_button_signal(button,floor);
+    }
   }
 }
 

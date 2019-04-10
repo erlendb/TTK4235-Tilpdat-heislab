@@ -16,7 +16,6 @@ int main() {
     elevator_update_button_signals();
     queue_update();
     lights_update();
-    update_current_floor();
 
     switch(get_next_state()) {
     	case IDLE:

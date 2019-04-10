@@ -39,7 +39,7 @@ void fsm_state_start() {
 
 void fsm_state_idle() {
   if (queue_get_order(currentFloor) != ORDER_NONE) fsm_transition(STAY, ENTRY);
-	else if (queue_count_orders()) fsm_transition(GO, ENTRY);
+	else if (queue_any_orders()) fsm_transition(GO, ENTRY);
 }
 
 void fsm_state_go() {
@@ -47,12 +47,10 @@ void fsm_state_go() {
     case ENTRY:
       if (currentFloor == BETWEEN_FLOORS && currentDirection == DIRN_STOP) {
         if (lastDirectionBeforeStop == DIRN_STOP) lastDirectionBeforeStop = lastDirection;
-
-        //if (queue_check_above(lastFloor - (lastDirectionBeforeStop == DIRN_DOWN))) elevator_set_direction(DIRN_UP);
         if (queue_check_above(lastFloor) || (lastDirectionBeforeStop == DIRN_DOWN && queue_get_order(lastFloor) != ORDER_NONE)) elevator_set_direction(DIRN_UP);
         else elevator_set_direction(DIRN_DOWN);
       }
-      else if (currentFloor != BETWEEN_FLOORS) {
+      else {
         if (currentFloor == 0) elevator_set_direction(DIRN_UP);
         else if (currentFloor == N_FLOORS - 1) elevator_set_direction(DIRN_DOWN);
         else if (lastDirection == DIRN_UP && !queue_check_above(currentFloor)) elevator_set_direction(DIRN_DOWN);
@@ -64,8 +62,9 @@ void fsm_state_go() {
       fsm_transition(GO, INTERNAL);
 
     case INTERNAL:
-      if (currentFloor != BETWEEN_FLOORS) {
-        if (lastFloor != currentFloor) elev_set_floor_indicator(currentFloor);
+      update_current_floor();
+      if (currentFloor != BETWEEN_FLOORS && currentFloor != lastFloor) {
+        elev_set_floor_indicator(currentFloor);
         lastFloor = currentFloor;
         if (queue_should_stop(currentFloor, currentDirection)) fsm_transition(STAY, ENTRY);
       }
@@ -88,8 +87,12 @@ void fsm_state_stay() {
       fsm_transition(STAY, INTERNAL);
 
     case INTERNAL:
-      if (queue_get_order(currentFloor) != ORDER_NONE) fsm_transition(STAY, ENTRY);
-      else if (timer_check()) fsm_transition(STAY, EXIT);
+      if (queue_get_order(currentFloor) != ORDER_NONE) {
+        lights_clear(currentFloor);
+        queue_clear(currentFloor);
+        timer_start();
+      }
+      else if (timer_expired()) fsm_transition(STAY, EXIT);
     break;
 
     case EXIT:
@@ -99,13 +102,14 @@ void fsm_state_stay() {
 }
 
 void fsm_state_stop() {
-    elevator_set_direction(DIRN_STOP);
-    queue_clear_all();
-    lights_clear_all();
-  	elev_set_stop_lamp(1);
-    if (elev_get_floor_sensor_signal() != BETWEEN_FLOORS) door_open();
-  	while (elev_get_stop_signal()) {};
-    elev_set_stop_lamp(0);
-    if (elev_get_floor_sensor_signal() == BETWEEN_FLOORS) fsm_transition(IDLE, ENTRY);
-    else fsm_transition(STAY, ENTRY);
+  elevator_set_direction(DIRN_STOP);
+  queue_clear_all();
+  lights_clear_all();
+	elev_set_stop_lamp(1);
+  update_current_floor();
+  if (currentFloor != BETWEEN_FLOORS) door_open();
+	while (elev_get_stop_signal()) {};
+  elev_set_stop_lamp(0);
+  if (currentFloor == BETWEEN_FLOORS) fsm_transition(IDLE, ENTRY);
+  else fsm_transition(STAY, ENTRY);
 }

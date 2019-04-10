@@ -24,12 +24,11 @@ void queue_clear(int floor) {
 	queue_add(floor, ORDER_NONE);
 }
 
-int queue_count_orders() {
-	int count = 0;
+int queue_any_orders() {
 	for (int i = 0; i < N_FLOORS; i++) {
-		count += (queue[i] != ORDER_NONE);
+		if (queue[i] != ORDER_NONE) return 1;
 	}
-	return count;
+	return 0;
 }
 
 int queue_should_stop(int floor, elev_motor_direction_t direction) {
