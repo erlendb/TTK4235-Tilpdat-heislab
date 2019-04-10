@@ -17,16 +17,12 @@ state_action stateAction = ENTRY;
 state_action get_state_action() { return stateAction; }
 void set_state_action(state_action action) { stateAction = action; }
 
-elev_motor_direction_t lastDirectionBeforeStop = DIRN_STOP;
-elev_motor_direction_t get_last_direction_before_stop() { return lastDirectionBeforeStop; }
-void set_last_direction_before_stop(elev_motor_direction_t dirn) { lastDirectionBeforeStop = dirn; }
-
-void state_transition(state_t state, state_action action) {
+void fsm_transition(state_t state, state_action action) {
   set_next_state(state);
   set_state_action(action);
 }
 
-void state_start() {
+void fsm_state_start() {
   if (!elev_init()) {
     printf("Beklager virkelig altså, men det ser ut til at heisen har fått influensa. Tror du må ta trappa i dag :(\n");
     exit(1);
@@ -36,15 +32,15 @@ void state_start() {
 	while (elev_get_floor_sensor_signal() == BETWEEN_FLOORS);
 	elevator_set_direction(DIRN_STOP);
 	elev_set_floor_indicator(elev_get_floor_sensor_signal());
-	state_transition(IDLE, ENTRY);
+	fsm_transition(IDLE, ENTRY);
 }
 
-void state_idle() {
-    if (queue_get_order(get_current_floor()) != ORDER_NONE) state_transition(STAY, ENTRY);
-  	else if (queue_count_orders()) state_transition(GO, ENTRY);
+void fsm_state_idle() {
+    if (queue_get_order(get_current_floor()) != ORDER_NONE) fsm_transition(STAY, ENTRY);
+  	else if (queue_count_orders()) fsm_transition(GO, ENTRY);
 }
 
-void state_go() {
+void fsm_state_go() {
   switch(get_state_action()) {
     case ENTRY:
       if (get_current_floor() == BETWEEN_FLOORS && get_current_direction() == DIRN_STOP) {
@@ -63,13 +59,13 @@ void state_go() {
         else if (get_last_direction() == DIRN_STOP) elevator_set_direction(DIRN_DOWN);
         else elevator_set_direction(get_last_direction());
       }
-      state_transition(GO, INTERNAL);
+      fsm_transition(GO, INTERNAL);
 
     case INTERNAL:
       if (get_current_floor() != BETWEEN_FLOORS) {
         elev_set_floor_indicator(get_current_floor());
         set_last_floor(get_current_floor());
-        if (queue_should_stop(get_current_floor(), get_current_direction())) state_transition(STAY, ENTRY);
+        if (queue_should_stop(get_current_floor(), get_current_direction())) fsm_transition(STAY, ENTRY);
       }
     break;
 
@@ -78,7 +74,7 @@ void state_go() {
   }
 }
 
-void state_stay() {
+void fsm_state_stay() {
   switch (get_state_action()) {
     case ENTRY:
       if (get_last_direction_before_stop()) set_last_direction_before_stop(0);
@@ -87,20 +83,20 @@ void state_stay() {
       queue_clear(get_current_floor());
       door_open();
       timer_start();
-      state_transition(STAY, INTERNAL);
+      fsm_transition(STAY, INTERNAL);
 
     case INTERNAL:
-      if (queue_get_order(get_current_floor()) != ORDER_NONE) state_transition(STAY, ENTRY);
-      if (timer_check()) state_transition(STAY, EXIT);
+      if (queue_get_order(get_current_floor()) != ORDER_NONE) fsm_transition(STAY, ENTRY);
+      if (timer_check()) fsm_transition(STAY, EXIT);
     break;
 
     case EXIT:
       door_close();
-      state_transition(IDLE, ENTRY);
+      fsm_transition(IDLE, ENTRY);
   }
 }
 
-void state_stop() {
+void fsm_state_stop() {
     elevator_set_direction(DIRN_STOP);
     queue_clear_all();
     lights_clear_all();
@@ -110,6 +106,6 @@ void state_stop() {
   	while (elev_get_stop_signal()) {};
 
     elev_set_stop_lamp(0);
-    if (elev_get_floor_sensor_signal() == BETWEEN_FLOORS) state_transition(IDLE, ENTRY);
-    else state_transition(STAY, ENTRY);
+    if (elev_get_floor_sensor_signal() == BETWEEN_FLOORS) fsm_transition(IDLE, ENTRY);
+    else fsm_transition(STAY, ENTRY);
 }

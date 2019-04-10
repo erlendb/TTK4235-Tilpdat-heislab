@@ -8,33 +8,34 @@
 
 int main() {
 
-  state_start();
+  int buttonSignals[N_FLOORS][N_BUTTONS];
+
+  fsm_state_start();
 
   while(1) {
-    if (elev_get_stop_signal()) set_next_state(STOP);
+    if (elev_get_stop_signal()) fsm_transition(STOP, ENTRY);
 
-    int buttonSignals[N_FLOORS][N_BUTTONS];
     elevator_update_button_signals(buttonSignals);
     queue_update(buttonSignals);
     lights_update(buttonSignals);
 
-    set_current_floor(elev_get_floor_sensor_signal());
+    update_current_floor();
 
     switch(get_next_state()) {
     	case IDLE:
-      	state_idle();
+      	fsm_state_idle();
         break;
 
     	case GO:
-      	state_go();
+      	fsm_state_go();
         break;
 
     	case STAY:
-      	state_stay();
+      	fsm_state_stay();
         break;
 
     	case STOP:
-      	state_stop();
+      	fsm_state_stop();
         break;
   	}
 	}

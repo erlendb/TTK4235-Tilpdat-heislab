@@ -15,6 +15,7 @@ void set_last_floor(int floor);
 
 int get_current_floor();
 void set_current_floor(int floor);
+void update_current_floor();
 
 /*! Sist kjente kjøreretning for heisen, utenom DIRN_STOP.
   * Inneholder alltid DIRN_UP eller DIRN_DOWN.
@@ -29,6 +30,9 @@ void set_last_direction(elev_motor_direction_t dirn);
   */
 elev_motor_direction_t get_current_direction();
 void set_current_direction(elev_motor_direction_t dirn);
+
+elev_motor_direction_t get_last_direction_before_stop();
+void set_last_direction_before_stop(elev_motor_direction_t dirn);
 
 /*! @brief Henter knappesignaler og oppdaterer array.
   * @param[out] buttonSignals Knappetrykksignalene lagres her.
