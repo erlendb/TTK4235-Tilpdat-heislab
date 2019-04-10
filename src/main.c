@@ -7,7 +7,7 @@
 #include "elevator.h"
 
 int main() {
-
+  
   state_t state = state_start();
 
   while(1) {
@@ -18,31 +18,27 @@ int main() {
     queue_update(buttonSignals);
     lights_update(buttonSignals);
 
+    currentFloor = elev_get_floor_sensor_signal();
+
     switch(state) {
     	case IDLE:
       	state = state_idle();
         break;
 
-    	case GO_ENTRY:
-      	state = state_go_entry();
-        break;
-    	case GO_INTERNAL:
-      	state = state_go_internal();
+    	case GO:
+      	state = state_go();
         break;
 
-    	case STAY_ENTRY:
-      	state = state_stay_entry();
-        break;
-    	case STAY_INTERNAL:
-      	state = state_stay_internal();
-        break;
-    	case STAY_EXIT:
-      	state = state_stay_exit();
+    	case STAY:
+      	state = state_stay();
         break;
 
     	case STOP:
       	state = state_stop();
         break;
+
+      case ERROR_STATE:
+        return 1;
   	}
 	}
 

@@ -12,6 +12,8 @@
   */
 extern int lastFloor;
 
+extern int currentFloor;
+
 /*! Sist kjente kjøreretning for heisen, utenom DIRN_STOP.
   * Inneholder alltid DIRN_UP eller DIRN_DOWN.
   * Unntak: Blir initialisert til DIRN_STOP.
