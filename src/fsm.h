@@ -18,10 +18,6 @@ typedef enum state_actions {
 } state_action;
 
 state_t get_next_state();
-void set_next_state(state_t state);
-
-state_action get_state_action();
-void set_state_action(state_action action);
 
 void fsm_transition(state_t state, state_action action);
 

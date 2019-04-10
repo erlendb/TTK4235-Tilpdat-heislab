@@ -11,15 +11,12 @@
 
 state_t nextState = IDLE;
 state_t get_next_state() { return nextState; }
-void set_next_state(state_t state) { nextState = state; }
 
 state_action stateAction = ENTRY;
-state_action get_state_action() { return stateAction; }
-void set_state_action(state_action action) { stateAction = action; }
 
 void fsm_transition(state_t state, state_action action) {
-  set_next_state(state);
-  set_state_action(action);
+  nextState = state;
+  stateAction = action;
 }
 
 void fsm_state_start() {
@@ -36,36 +33,37 @@ void fsm_state_start() {
 }
 
 void fsm_state_idle() {
-    if (queue_get_order(get_current_floor()) != ORDER_NONE) fsm_transition(STAY, ENTRY);
-  	else if (queue_count_orders()) fsm_transition(GO, ENTRY);
+  if (queue_get_order(currentFloor) != ORDER_NONE) fsm_transition(STAY, ENTRY);
+	else if (queue_count_orders()) fsm_transition(GO, ENTRY);
 }
 
 void fsm_state_go() {
-  switch(get_state_action()) {
-    case ENTRY:
-      if (get_current_floor() == BETWEEN_FLOORS && get_current_direction() == DIRN_STOP) {
-        if (!get_last_direction_before_stop()) set_last_direction_before_stop(get_last_direction());
+  switch(stateAction) {
+    case ENTRY: {
+      if (currentFloor == BETWEEN_FLOORS && currentDirection == DIRN_STOP) {
+        if (!lastDirectionBeforeStop) lastDirectionBeforeStop = lastDirection;
 
         //Vill algoritme som finner riktig retning for stuck heis:
-        if (queue_check_above(get_last_floor()-(get_last_direction_before_stop()==DIRN_DOWN))) elevator_set_direction(DIRN_UP);
+        if (queue_check_above(lastFloor-(lastDirectionBeforeStop==DIRN_DOWN))) elevator_set_direction(DIRN_UP);
         else elevator_set_direction(DIRN_DOWN);
       }
-      else if (get_current_floor() != BETWEEN_FLOORS) {
-        if (get_current_floor() == 0) elevator_set_direction(DIRN_UP);
-        else if (get_current_floor() == N_FLOORS - 1) elevator_set_direction(DIRN_DOWN);
-        else if (get_last_direction() == DIRN_UP && !queue_check_above(get_current_floor())) elevator_set_direction(DIRN_DOWN);
-        else if (get_last_direction() == DIRN_DOWN && !queue_check_below(get_current_floor())) elevator_set_direction(DIRN_UP);
-        else if (get_last_direction() == DIRN_STOP && queue_check_above(get_current_floor())) elevator_set_direction(DIRN_UP);
-        else if (get_last_direction() == DIRN_STOP) elevator_set_direction(DIRN_DOWN);
-        else elevator_set_direction(get_last_direction());
+      else if (currentFloor != BETWEEN_FLOORS) {
+        if (currentFloor == 0) elevator_set_direction(DIRN_UP);
+        else if (currentFloor == N_FLOORS - 1) elevator_set_direction(DIRN_DOWN);
+        else if (lastDirection == DIRN_UP && !queue_check_above(currentFloor)) elevator_set_direction(DIRN_DOWN);
+        else if (lastDirection == DIRN_DOWN && !queue_check_below(currentFloor)) elevator_set_direction(DIRN_UP);
+        else if (lastDirection == DIRN_STOP && queue_check_above(currentFloor)) elevator_set_direction(DIRN_UP);
+        else if (lastDirection == DIRN_STOP) elevator_set_direction(DIRN_DOWN);
+        else elevator_set_direction(lastDirection);
       }
       fsm_transition(GO, INTERNAL);
+    }
 
     case INTERNAL:
-      if (get_current_floor() != BETWEEN_FLOORS) {
-        elev_set_floor_indicator(get_current_floor());
-        set_last_floor(get_current_floor());
-        if (queue_should_stop(get_current_floor(), get_current_direction())) fsm_transition(STAY, ENTRY);
+      if (currentFloor != BETWEEN_FLOORS) {
+        elev_set_floor_indicator(currentFloor);
+        lastFloor = currentFloor;
+        if (queue_should_stop(currentFloor, currentDirection)) fsm_transition(STAY, ENTRY);
       }
     break;
 
@@ -75,18 +73,18 @@ void fsm_state_go() {
 }
 
 void fsm_state_stay() {
-  switch (get_state_action()) {
+  switch (stateAction) {
     case ENTRY:
-      if (get_last_direction_before_stop()) set_last_direction_before_stop(0);
+      if (lastDirectionBeforeStop) lastDirectionBeforeStop = 0;
       elevator_set_direction(DIRN_STOP);
-      lights_clear(get_current_floor());
-      queue_clear(get_current_floor());
+      lights_clear(currentFloor);
+      queue_clear(currentFloor);
       door_open();
       timer_start();
       fsm_transition(STAY, INTERNAL);
 
     case INTERNAL:
-      if (queue_get_order(get_current_floor()) != ORDER_NONE) fsm_transition(STAY, ENTRY);
+      if (queue_get_order(currentFloor) != ORDER_NONE) fsm_transition(STAY, ENTRY);
       if (timer_check()) fsm_transition(STAY, EXIT);
     break;
 
