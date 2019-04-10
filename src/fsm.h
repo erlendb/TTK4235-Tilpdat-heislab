@@ -1,57 +1,74 @@
-/*! @file
+/** @file
   * @brief Tilstandsmaskin med tilhørende greier
   */
 
-/*! Enum med heistilstander
+/** Enum med heistilstander
+  *
+  * Dette er tilstandende tilstandsmaskinen kan gå inn i.
+  * START-tilstand finnes også, men er ikke tatt med her. Heisen er kun i start-tilstanden i begynnelsen av programmet,
+  * og tilstandsmaskinen vil således aldri havne i start-tilstand etter initialisering.
   */
 typedef enum states {
-  IDLE,
-  GO,
-  STAY,
-  STOP,
+  IDLE, ///< I IDLE-tilstand venter heisen på ny bestilling.
+  GO,   ///< I GO-tilstand bestemmer heisen retning og går mot en bestilling.
+  STAY, ///< I STAY-tilstand står heisen i en etasje og utfører en bestilling.
+  STOP, ///< I STOP-tilstand har heisen gått i nødmodus.
 } state_t;
 
+/** Enum med actions for tilstandene.
+  *
+  * INTERNAL-action kan sies å være "selve tilstanden", mens ENTRY og EXIT er delene av tilstanden som kun utføres én gang hver, henholdsvis på vei inn og ut av tilstanden.
+  * Alle actionene er forskjellige fra tilstand til tilstand.
+  * Tilstander kan ha ingen, én eller flere.
+  */
 typedef enum state_actions {
-  ENTRY,
-  INTERNAL,
-  EXIT,
+  ENTRY,    ///< ENTRY-action utføres på vei inn i en ny tilstand.
+  INTERNAL, ///< INTERNAL-action utføres gjentatte ganger så lenge vi holder oss i en tilstand.
+  EXIT,     ///< EXIT-action utføres på vei ut av en tilstand.
 } state_action;
 
+/** @brief Henter den neste tilstanden tilstandsmaskinen skal inn i
+  *
+  * @return Neste tilstand
+  */
 state_t get_next_state();
 
+/** @brief Oppdaterer tilstandsmaskinens neste tilstand (lokal nextState), samt neste action (lokal stateAction).
+  *
+  * @param[in] state Neste tilstand
+  * @param[in] action Neste action
+  */
 void fsm_transition(state_t state, state_action action);
 
-/*! @brief Kjører start-state
-  * @details Kjører heisen ned til nærmeste etasje hvis heisen startes mellom to etasjer. Heisen blir stående hvis den startes i en etasje.
+/** @brief Kjører start-tilstand
   *
-  * @return Neste state
+  * Kjører heisen ned til nærmeste etasje hvis heisen startes mellom to etasjer. Heisen blir stående hvis den startes i en etasje.
+  * Går deretter til idle-tilstand.
   */
 void fsm_state_start();
 
-/*! @brief Kjører idle-state.
-  * @details Går rett til go-state hvis vi har bestilling i køen. Venter på ny bestilling hvis køen er tom.
+/** @brief Kjører idle-tilstand.
   *
-  * @return Neste state
+  * Venter på ny bestilling hvis køen er tom.
+  * Går til stay-tilstand hvis vi har en bestilling i samme etasje som heisen står i.
+  * Går til go-state hvis vi har bestilling et annet sted.
   */
 void fsm_state_idle();
 
-/*! @brief Kjører go-state.
-  * @details Sender heisen i retning av neste bestilling. Stopper hvis vi kommer over en etasje med relevant bestilling.
+/** @brief Kjører go-tilstand.
   *
-  * @return Neste state
+  * Sender heisen i retning av neste bestilling. Stopper hvis vi havner i en etasje med en bestilling som skal håndteres.
   */
 void fsm_state_go();
 
-/*! @brief Kjører stay-state
-  * @details Gjør det som skal gjøres når vi står i en etasje. Åpner og lukker døra.
+/** @brief Kjører stay-state
   *
-  * @return Neste state
+  * Håndterer en bestilling i en etasje.
   */
 void fsm_state_stay();
 
-/*! @brief Kjører stop-state
-  * @details Fikse alt som skal fikses ved nødstopp.
+/** @brief Kjører stop-state
   *
-  * @return Neste state
+  * Fikser alt som skal fikses ved nødstopp.
   */
 void fsm_state_stop();

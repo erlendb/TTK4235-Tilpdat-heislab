@@ -1,13 +1,13 @@
-/*! @file
+/** @file
   * @brief Timer
   */
 
-/*! @brief Starter klokka
+/** @brief Starter klokka
 */
 void timer_start();
 
-/*! @brief Sjekker og returnerer hvorvidt timeren har passert riktig tid
+/** @brief Sjekker og returnerer hvorvidt timeren har passert riktig tid
 *
-* @return Hvorvidt vi har passert grensetiden, 1 (passert) eller 0 (ikke passert)
+* @return Hvorvidt timeren er utløpt (ja/nei, 1/0)
 */
 int timer_expired();

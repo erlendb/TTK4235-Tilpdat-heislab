@@ -1,17 +1,18 @@
-/*! @file
+/** @file
   * @brief Bestillingslys
   */
 
-/*! @brief Skrur av alle bestillingslys i gitt etasje
+/** @brief Skrur av alle bestillingslys i gitt etasje
   */
 void lights_clear_all();
 
-/*! @brief Skrur av alle bestillingslys i gitt etasje
+/** @brief Skrur av alle bestillingslys i gitt etasje
+  *
   * @param[in] Etasje der lysene skal skrues av
   */
 void lights_clear(int floor);
 
-/*! @brief Oppdaterer bestillingslys i henhold til innhentede knappetrykksignaler
-  * @param[in] buttonSignals Array med knappesignaler
+/** @brief Oppdaterer bestillingslys ut fra nye knappetrykkarray i elevator-modulen.
+  * Nytter elevator_get_button_signal(), og skrur på nye lys dersom det har kommet en ny bestilling.
   */
 void lights_update();
