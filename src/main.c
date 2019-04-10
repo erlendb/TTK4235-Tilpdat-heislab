@@ -7,11 +7,11 @@
 #include "elevator.h"
 
 int main() {
-  
-  state_t state = state_start();
+
+  state_start();
 
   while(1) {
-    if (elev_get_stop_signal()) state = STOP;
+    if (elev_get_stop_signal()) nextState = STOP;
 
     int buttonSignals[N_FLOORS][N_BUTTONS];
     elevator_update_button_signals(buttonSignals);
@@ -20,25 +20,22 @@ int main() {
 
     currentFloor = elev_get_floor_sensor_signal();
 
-    switch(state) {
+    switch(nextState) {
     	case IDLE:
-      	state = state_idle();
+      	state_idle();
         break;
 
     	case GO:
-      	state = state_go();
+      	state_go();
         break;
 
     	case STAY:
-      	state = state_stay();
+      	state_stay();
         break;
 
     	case STOP:
-      	state = state_stop();
+      	state_stop();
         break;
-
-      case ERROR_STATE:
-        return 1;
   	}
 	}
 
