@@ -9,13 +9,23 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-elev_motor_direction_t lastDirectionBeforeStop = DIRN_STOP;
-state_action stateAction = ENTRY;
 state_t nextState = IDLE;
+state_t get_next_state() { return nextState; }
+void set_next_state(state_t state) { nextState = state; }
+
+state_action stateAction = ENTRY;
+state_action get_state_action() { return stateAction; }
+void set_state_action(state_action action) { stateAction = action; }
+
+elev_motor_direction_t lastDirectionBeforeStop = DIRN_STOP;
+elev_motor_direction_t get_last_direction_before_stop() { return lastDirectionBeforeStop; }
+void set_last_direction_before_stop(elev_motor_direction_t dirn) { lastDirectionBeforeStop = dirn; }
+
+
 
 void state_transition(state_t state, state_action action) {
-  nextState = state;
-  stateAction = action;
+  set_next_state(state);
+  set_state_action(action);
 }
 
 void state_start() {
@@ -37,13 +47,13 @@ void state_idle() {
 }
 
 void state_go() {
-  switch(stateAction) {
+  switch(get_state_action()) {
     case ENTRY:
       if (currentFloor == BETWEEN_FLOORS && currentDirection == DIRN_STOP) {
-        if (!lastDirectionBeforeStop) lastDirectionBeforeStop=lastDirection;
+        if (!get_last_direction_before_stop()) set_last_direction_before_stop(lastDirection);
 
         //Vill algoritme som finner riktig retning for stuck heis:
-        if (queue_check_above(lastFloor-(lastDirectionBeforeStop==DIRN_DOWN))) elevator_set_direction(DIRN_UP);
+        if (queue_check_above(lastFloor-(get_last_direction_before_stop()==DIRN_DOWN))) elevator_set_direction(DIRN_UP);
         else elevator_set_direction(DIRN_DOWN);
       }
       else if (currentFloor != BETWEEN_FLOORS) {
@@ -55,6 +65,7 @@ void state_go() {
         else if (lastDirection == DIRN_STOP) elevator_set_direction(DIRN_DOWN);
         else elevator_set_direction(lastDirection);
       }
+      state_transition(GO, INTERNAL);
 
     case INTERNAL:
       if (currentFloor != BETWEEN_FLOORS) {
@@ -70,14 +81,15 @@ void state_go() {
 }
 
 void state_stay() {
-  switch (stateAction) {
+  switch (get_state_action()) {
     case ENTRY:
-      if (lastDirectionBeforeStop) lastDirectionBeforeStop=0;
+      if (get_last_direction_before_stop()) set_last_direction_before_stop(0);
       elevator_set_direction(DIRN_STOP);
       lights_clear(currentFloor);
       queue_clear(currentFloor);
       door_open();
       timer_start();
+      state_transition(STAY, INTERNAL);
 
     case INTERNAL:
       if (queue_get_order(currentFloor) != ORDER_NONE) state_transition(STAY, ENTRY);

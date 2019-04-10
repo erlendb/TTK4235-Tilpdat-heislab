@@ -11,7 +11,7 @@ int main() {
   state_start();
 
   while(1) {
-    if (elev_get_stop_signal()) nextState = STOP;
+    if (elev_get_stop_signal()) set_next_state(STOP);
 
     int buttonSignals[N_FLOORS][N_BUTTONS];
     elevator_update_button_signals(buttonSignals);
@@ -20,7 +20,7 @@ int main() {
 
     currentFloor = elev_get_floor_sensor_signal();
 
-    switch(nextState) {
+    switch(get_next_state()) {
     	case IDLE:
       	state_idle();
         break;
