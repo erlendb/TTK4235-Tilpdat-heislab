@@ -39,21 +39,21 @@ int queue_should_stop(int floor, elev_motor_direction_t direction);
   *
   * @return Hvorvidt det finnes bestillinger i køen (ja/nei, 1/0).
   */
-int queue_check_all_floors();
+int queue_any_orders();
 
 /** @brief Sjekker hvorvidt det finnes bestillinger over gitt etasje
   * @param[in] floor Etasjen vi skal sjekke bestillinger over.
   *
   * @return Hvorvidt det finnes bestillinger over (ja/nei, 1/0).
   */
-int queue_check_above(int floor);
+int queue_any_orders_above(int floor);
 
 /** @brief Sjekker hvorvidt det finnes bestillinger under gitt etasje
   * @param[in] floor Etasjen vi skal sjekke bestillinger under.
   *
   * @return Hvorvidt det finnes bestillinger under (ja/nei, 1/0).
   */
-int queue_check_below(int floor);
+int queue_any_orders_below(int floor);
 
 /** @brief Henter og returnerer bestillingen i gitt etasje.
   * @param[in] floor Etasjen vi skal hente bestillingen fram

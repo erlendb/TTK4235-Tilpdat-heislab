@@ -24,7 +24,7 @@ void queue_clear_floor(int floor) {
 	queue_add_order(floor, ORDER_NONE);
 }
 
-int queue_check_all_floors() {
+int queue_any_orders() {
 	for (int floor = 0; floor < N_FLOORS; floor++) {
 		if (queue[floor] != ORDER_NONE) return 1;
 	}
@@ -38,21 +38,21 @@ int queue_should_stop(int floor, elev_motor_direction_t direction) {
 	else if (order == ORDER_ALL) return 1;
 	else if (direction == DIRN_UP && order == ORDER_UP) return 1;
 	else if (direction == DIRN_DOWN && order == ORDER_DOWN) return 1;
-	else if (direction == DIRN_UP && order == ORDER_DOWN) return !queue_check_above(floor);
-	else if (direction == DIRN_DOWN && order == ORDER_UP) return !queue_check_below(floor);
+	else if (direction == DIRN_UP && order == ORDER_DOWN) return !queue_any_orders_above(floor);
+	else if (direction == DIRN_DOWN && order == ORDER_UP) return !queue_any_orders_below(floor);
 	else return 0;
 }
 
-int queue_check_above(int floor) {
-	for (int i = floor + 1; i < N_FLOORS; i++) {
-		if (queue[i] != ORDER_NONE) return 1;
+int queue_any_orders_above(int floor) {
+	for (int f = floor + 1; f < N_FLOORS; f++) {
+		if (queue[f] != ORDER_NONE) return 1;
 	}
 	return 0;
 }
 
-int queue_check_below(int floor) {
-	for (int i = floor - 1; i >= 0; i--) {
-		if (queue[i] != ORDER_NONE) return 1;
+int queue_any_orders_below(int floor) {
+	for (int f = floor - 1; f >= 0; f--) {
+		if (queue[f] != ORDER_NONE) return 1;
 	}
 	return 0;
 }
