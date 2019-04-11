@@ -15,14 +15,15 @@ void update_current_floor() {
 void elevator_fetch_button_signals() {
   for (int floor = 0; floor < N_FLOORS; floor++) {
     for (int button = 0; button < N_BUTTONS; button++) {
-      if (!(floor == N_FLOORS - 1 && button == BUTTON_CALL_UP) && !(floor == 0 && button == BUTTON_CALL_DOWN)) buttonSignals[floor][button] = elev_get_button_signal(button,floor);
+      if (!(floor == N_FLOORS - 1 && button == BUTTON_CALL_UP) && !(floor == 0 && button == BUTTON_CALL_DOWN)) {
+        buttonSignals[floor][button] = elev_get_button_signal(button,floor);
+      }
     }
   }
 }
 
 void elevator_set_direction(elev_motor_direction_t dirn) {
 	elev_set_motor_direction(dirn);
-	//direction får kun verdiene DIRN_UP eller DIRN_DOWN. Ved stopp vil direction inneholde sist kjente heisretning.
 	if (dirn != DIRN_STOP) lastDirection = dirn;
 	currentDirection = dirn;
 }
