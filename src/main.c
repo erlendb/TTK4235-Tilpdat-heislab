@@ -11,7 +11,7 @@ int main() {
   fsm_state_initialize();
 
   while(1) {
-    if (elev_get_stop_signal()) fsm_transition(STOP, ENTRY);
+    if (elev_get_stop_signal()) fsm_transition(EMERGENCY, ENTRY);
 
     elevator_fetch_button_signals();
     queue_update_from_button_signals();
@@ -27,7 +27,7 @@ int main() {
     	case STAY:
       	fsm_state_stay();
         break;
-    	case STOP:
+    	case EMERGENCY:
       	fsm_state_emergency();
         break;
   	}

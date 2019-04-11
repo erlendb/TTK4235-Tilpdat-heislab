@@ -12,7 +12,7 @@ typedef enum states {
   IDLE, ///< I IDLE-tilstand venter heisen på ny bestilling.
   GO,   ///< I GO-tilstand bestemmer heisen retning og går mot en bestilling.
   STAY, ///< I STAY-tilstand står heisen i en etasje og utfører en bestilling.
-  STOP, ///< I STOP-tilstand har heisen gått i nødmodus.
+  EMERGENCY, ///< I EMERGENCY-tilstand har heisen gått i nødmodus.
 } state_t;
 
 /** Enum med actions for tilstandene.
