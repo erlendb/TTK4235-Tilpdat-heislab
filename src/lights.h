@@ -2,13 +2,13 @@
   * @brief Bestillingslys
   */
 
-/** @brief Skrur av alle bestillingslys i gitt etasje
+/** @brief Skrur av alle bestillingslys
   */
 void lights_clear_all();
 
 /** @brief Skrur av alle bestillingslys i gitt etasje
   *
-  * @param[in] Etasje der lysene skal skrues av
+  * @param[in] floor Etasje der lysene skal skrues av
   */
 void lights_clear_floor(int floor);
 
