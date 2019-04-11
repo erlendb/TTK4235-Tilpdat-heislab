@@ -1,7 +1,7 @@
 #include "driver.h"
 #include "elevator.h"
 
-int lights[N_FLOORS][N_BUTTONS] = {0};
+int lights[N_FLOORS][N_BUTTONS] = {};
 
 void lights_clear_floor(int floor) {
   for (int button = 0; button < N_BUTTONS; button++) {
