@@ -3,7 +3,7 @@
   * @details Mellomsteg mellom heisdriveren og tilstandsmaskin/moduler. Globale variabler knyttet til heisen.
   */
 
-#include "driver/elev.h"
+#include "driver.h"
 
 #define BETWEEN_FLOORS -1
 

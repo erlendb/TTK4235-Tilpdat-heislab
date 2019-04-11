@@ -1,4 +1,4 @@
-#include "driver/elev.h"
+#include "driver.h"
 #include "elevator.h"
 
 int lights[N_FLOORS][N_BUTTONS] = {0};

@@ -1,6 +1,5 @@
 #include <comedilib.h>
-
-#include "driver/elev.h"
+#include "driver.h"
 #include "queue.h"
 #include "lights.h"
 #include "fsm.h"
