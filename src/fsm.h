@@ -29,13 +29,13 @@ typedef enum state_actions {
 
 /** @brief Henter etasjesignal fra heisdriveren og oppdaterer global currentFloor.
   */
-void update_current_floor();
+void fsm_update_current_floor();
 
 /** @brief Sender motoren i gitt retning, og oppdaterer globale currentDirection og lastDirection.
   *
   * @param[in] dirn Ny motorretning
   */
-void elevator_set_direction(elev_motor_direction_t dirn);
+void fsm_set_elevator_direction(elev_motor_direction_t dirn);
 
 /** @brief Henter den neste tilstanden tilstandsmaskinen skal inn i
   *

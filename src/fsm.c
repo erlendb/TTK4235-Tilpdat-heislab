@@ -18,11 +18,11 @@ elev_motor_direction_t currentDirection = DIRN_STOP;
 elev_motor_direction_t lastDirection = DIRN_STOP;
 elev_motor_direction_t lastDirectionBeforeStop = DIRN_STOP;
 
-void update_current_floor() {
+void fsm_update_current_floor() {
   currentFloor = elev_get_floor_sensor_signal();
 }
 
-void elevator_set_direction(elev_motor_direction_t dirn) {
+void fsm_set_elevator_direction(elev_motor_direction_t dirn) {
 	elev_set_motor_direction(dirn);
 	if (dirn != DIRN_STOP) lastDirection = dirn;
 	currentDirection = dirn;
@@ -43,12 +43,12 @@ void fsm_state_initialize() {
     exit(1);
   }
 	queue_clear_all();
-  update_current_floor();
-	if (currentFloor == BETWEEN_FLOORS) elevator_set_direction(DIRN_DOWN);
+  fsm_update_current_floor();
+	if (currentFloor == BETWEEN_FLOORS) fsm_set_elevator_direction(DIRN_DOWN);
 	while (currentFloor == BETWEEN_FLOORS) {
-    update_current_floor();
+    fsm_update_current_floor();
   }
-	elevator_set_direction(DIRN_STOP);
+	fsm_set_elevator_direction(DIRN_STOP);
 	elev_set_floor_indicator(currentFloor);
 	fsm_transition(IDLE, ENTRY);
 }
@@ -63,22 +63,22 @@ void fsm_state_go() {
     case ENTRY:
       if (currentFloor == BETWEEN_FLOORS && currentDirection == DIRN_STOP) {
         if (lastDirectionBeforeStop == DIRN_STOP) lastDirectionBeforeStop = lastDirection;
-        if (queue_any_orders_above(lastFloor) || (lastDirectionBeforeStop == DIRN_DOWN && queue_get_order(lastFloor) != ORDER_NONE)) elevator_set_direction(DIRN_UP);
-        else elevator_set_direction(DIRN_DOWN);
+        if (queue_any_orders_above(lastFloor) || (lastDirectionBeforeStop == DIRN_DOWN && queue_get_order(lastFloor) != ORDER_NONE)) fsm_set_elevator_direction(DIRN_UP);
+        else fsm_set_elevator_direction(DIRN_DOWN);
       }
       else {
-        if (currentFloor == 0) elevator_set_direction(DIRN_UP);
-        else if (currentFloor == N_FLOORS - 1) elevator_set_direction(DIRN_DOWN);
-        else if (lastDirection == DIRN_UP && !queue_any_orders_above(currentFloor)) elevator_set_direction(DIRN_DOWN);
-        else if (lastDirection == DIRN_DOWN && !queue_any_orders_below(currentFloor)) elevator_set_direction(DIRN_UP);
-        else if (lastDirection == DIRN_STOP && queue_any_orders_above(currentFloor)) elevator_set_direction(DIRN_UP);
-        else if (lastDirection == DIRN_STOP) elevator_set_direction(DIRN_DOWN);
-        else elevator_set_direction(lastDirection);
+        if (currentFloor == 0) fsm_set_elevator_direction(DIRN_UP);
+        else if (currentFloor == N_FLOORS - 1) fsm_set_elevator_direction(DIRN_DOWN);
+        else if (lastDirection == DIRN_UP && !queue_any_orders_above(currentFloor)) fsm_set_elevator_direction(DIRN_DOWN);
+        else if (lastDirection == DIRN_DOWN && !queue_any_orders_below(currentFloor)) fsm_set_elevator_direction(DIRN_UP);
+        else if (lastDirection == DIRN_STOP && queue_any_orders_above(currentFloor)) fsm_set_elevator_direction(DIRN_UP);
+        else if (lastDirection == DIRN_STOP) fsm_set_elevator_direction(DIRN_DOWN);
+        else fsm_set_elevator_direction(lastDirection);
       }
       fsm_transition(GO, INTERNAL);
 
     case INTERNAL:
-      update_current_floor();
+      fsm_update_current_floor();
       if (currentFloor != BETWEEN_FLOORS) {
         lastDirectionBeforeStop = DIRN_STOP;
         if (currentFloor != lastFloor) {
@@ -97,7 +97,7 @@ void fsm_state_go() {
 void fsm_state_stay() {
   switch (nextAction) {
     case ENTRY:
-      elevator_set_direction(DIRN_STOP);
+      fsm_set_elevator_direction(DIRN_STOP);
       lights_clear_floor(currentFloor);
       queue_clear_floor(currentFloor);
       door_open();
@@ -120,11 +120,11 @@ void fsm_state_stay() {
 }
 
 void fsm_state_emergency() {
-  elevator_set_direction(DIRN_STOP);
+  fsm_set_elevator_direction(DIRN_STOP);
   queue_clear_all();
   lights_clear_all();
 	elev_set_stop_lamp(1);
-  update_current_floor();
+  fsm_update_current_floor();
   if (currentFloor != BETWEEN_FLOORS) door_open();
 	while (elev_get_stop_signal()) {};
   elev_set_stop_lamp(0);
