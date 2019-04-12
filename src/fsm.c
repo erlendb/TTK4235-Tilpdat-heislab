@@ -4,7 +4,7 @@
 #include "lights.h"
 #include "fsm.h"
 #include "timer.h"
-#include "elevator.h"
+#include "buttons.h"
 
 #include <stdlib.h>
 #include <stdio.h>

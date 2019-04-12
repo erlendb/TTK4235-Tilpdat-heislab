@@ -8,7 +8,7 @@ else
 	DRIVER_SOURCE = driver-sal/elev.c driver-sal/io.c
 endif
 
-SOURCES := $(DRIVER_SOURCE) main.c elevator.c fsm.c queue.c lights.c door.c timer.c
+SOURCES := $(DRIVER_SOURCE) main.c buttons.c fsm.c queue.c lights.c door.c timer.c
 
 BUILD_DIR := build
 OBJ := $(SOURCES:%.c=$(BUILD_DIR)/%.o)

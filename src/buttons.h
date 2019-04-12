@@ -9,7 +9,7 @@
 
 /** @brief Henter knappesignaler fra heisdriveren og oppdaterer lokalt array.
   */
-void elevator_fetch_button_signals();
+void buttons_fetch_signals();
 
 /** @brief Returnerer hvorvidt en gitt knapp i en gitt etasje er trykket inn (ja/nei).
   *
@@ -17,4 +17,4 @@ void elevator_fetch_button_signals();
   * @param[in] floor  Etasjen som knappen vi vil spørre etter ligger i.
   * @return Hvorvidt gitt knapp er trykket inn (ja/nei, 1/0).
   */
-int elevator_get_button_signal(elev_button_type_t button, int floor);
+int buttons_get_signal(elev_button_type_t button, int floor);

@@ -3,7 +3,7 @@
 #include "queue.h"
 #include "lights.h"
 #include "fsm.h"
-#include "elevator.h"
+#include "buttons.h"
 
 int main() {
 
@@ -12,7 +12,7 @@ int main() {
   while(1) {
     if (elev_get_stop_signal()) fsm_transition(EMERGENCY, ENTRY);
 
-    elevator_fetch_button_signals();
+    buttons_fetch_signals();
     queue_update_from_button_signals();
     lights_update_from_button_signals();
 

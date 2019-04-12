@@ -2,7 +2,7 @@
 
 #include "driver.h"
 #include "queue.h"
-#include "elevator.h"
+#include "buttons.h"
 
 int queue[N_FLOORS] = {0};
 
@@ -65,7 +65,7 @@ order_t queue_get_order(int floor) {
 void queue_update_from_button_signals() {
 	for (int floor=0; floor < N_FLOORS; floor++) {
 		for (int button=0; button < N_BUTTONS; button++) {
-			if (elevator_get_button_signal(floor, button)) queue_add_order(floor, button);
+			if (buttons_get_signal(floor, button)) queue_add_order(floor, button);
 		}
 	}
 }

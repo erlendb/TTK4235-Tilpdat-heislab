@@ -1,5 +1,5 @@
 #include "driver.h"
-#include "elevator.h"
+#include "buttons.h"
 
 int lights[N_FLOORS][N_BUTTONS] = {};
 
@@ -23,7 +23,7 @@ void lights_clear_all() {
 void lights_update_from_button_signals() {
 	for (int floor=0; floor < N_FLOORS; floor++) {
 		for (int button=0; button < N_BUTTONS; button++) {
-			if (elevator_get_button_signal(floor, button) && lights[floor][button] == 0) {
+			if (buttons_get_signal(floor, button) && lights[floor][button] == 0) {
         lights[floor][button] = 1;
         elev_set_button_lamp(button, floor, 1);
       }
