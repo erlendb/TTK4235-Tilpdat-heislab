@@ -27,11 +27,21 @@ typedef enum state_actions {
   EXIT,     ///< EXIT-action utføres på vei ut av en tilstand.
 } state_action_t;
 
+/** @brief Henter etasjesignal fra heisdriveren og oppdaterer global currentFloor.
+  */
+void update_current_floor();
+
+/** @brief Sender motoren i gitt retning, og oppdaterer globale currentDirection og lastDirection.
+  *
+  * @param[in] dirn Ny motorretning
+  */
+void elevator_set_direction(elev_motor_direction_t dirn);
+
 /** @brief Henter den neste tilstanden tilstandsmaskinen skal inn i
   *
   * @return Neste tilstand
   */
-state_t get_next_state();
+state_t fsm_get_next_state();
 
 /** @brief Oppdaterer tilstandsmaskinens neste tilstand (lokal nextState), samt neste action (lokal stateAction).
   *

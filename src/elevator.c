@@ -1,16 +1,6 @@
 #include "elevator.h"
 
-int currentFloor = BETWEEN_FLOORS;
-int lastFloor = BETWEEN_FLOORS;
-elev_motor_direction_t currentDirection = DIRN_STOP;
-elev_motor_direction_t lastDirection = DIRN_STOP;
-elev_motor_direction_t lastDirectionBeforeStop = DIRN_STOP;
-
 static int buttonSignals[N_FLOORS][N_BUTTONS];
-
-void update_current_floor() {
-  currentFloor = elev_get_floor_sensor_signal();
-}
 
 void elevator_fetch_button_signals() {
   for (int floor = 0; floor < N_FLOORS; floor++) {
@@ -20,12 +10,6 @@ void elevator_fetch_button_signals() {
       }
     }
   }
-}
-
-void elevator_set_direction(elev_motor_direction_t dirn) {
-	elev_set_motor_direction(dirn);
-	if (dirn != DIRN_STOP) lastDirection = dirn;
-	currentDirection = dirn;
 }
 
 int elevator_get_button_signal(elev_button_type_t button, int floor) {

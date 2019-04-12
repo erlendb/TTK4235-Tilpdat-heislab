@@ -12,7 +12,23 @@
 static state_t nextState = IDLE;
 static state_action_t nextAction = ENTRY;
 
-state_t get_next_state() {
+int currentFloor = BETWEEN_FLOORS;
+int lastFloor = BETWEEN_FLOORS;
+elev_motor_direction_t currentDirection = DIRN_STOP;
+elev_motor_direction_t lastDirection = DIRN_STOP;
+elev_motor_direction_t lastDirectionBeforeStop = DIRN_STOP;
+
+void update_current_floor() {
+  currentFloor = elev_get_floor_sensor_signal();
+}
+
+void elevator_set_direction(elev_motor_direction_t dirn) {
+	elev_set_motor_direction(dirn);
+	if (dirn != DIRN_STOP) lastDirection = dirn;
+	currentDirection = dirn;
+}
+
+state_t fsm_get_next_state() {
   return nextState;
 }
 

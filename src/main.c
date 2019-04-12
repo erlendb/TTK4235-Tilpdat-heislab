@@ -16,7 +16,7 @@ int main() {
     queue_update_from_button_signals();
     lights_update_from_button_signals();
 
-    switch(get_next_state()) {
+    switch(fsm_get_next_state()) {
     	case IDLE:
       	fsm_state_idle();
         break;
