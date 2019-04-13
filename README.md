@@ -7,16 +7,17 @@ Mekket av Erlend Blomseth og Axel Tveiten Bech.
 
 ## Heis v4
 
-Testet og funker i simulator og på sal. FAT 11/4 uten feil med v4.3.
+v4.3: Testet og funker i simulator og på sal. FAT 11/4 uten feil.
 
 Optimalisert for minst mulig skriving til og lesing fra hardvaren/simulatoren.
 
 
-### Make
+### Hvordan bruke simulator eller heis på sal?
 
 For å kompilere til bruk på sal: sett SIMULATOR-flagget øverst i Makefile og øverst i driver.h til 0.
 
 For å kompilere til bruk i simulator (https://github.com/TTK4145/Simulator-v2): sett de to nevnte SIMULATOR-flaggene til 1.
+
 
 ### Hvordan funker heisen?
 Tilstandsmaskin med spesifiserte inn- og ut-aktiviteter, altså oppgaver som skal utføres på vei inn til eller på vei ut av en tilstand.
@@ -34,18 +35,6 @@ Tilstandsmaskinen er bygget opp som følger:
   * internal (Selve stay-tilstanden)
   * exit (På vei ut av stay-tilstanden)
 * emergency (Nødstopp. Ingen inn- eller ut-tilstander)
-
-
-### Bør kanskje fikses
-
-* Misbruk av notasjon i lastDirectionBeforeStop. Kanskje bruke set_lastDirectionBeforeStop(dirn) og unset_lastDirectionBeforeStop()?
-* Flytte lastDirectionBeforeStop-logikk inn i set_direction.
-* go-internal etter optimalisering: leter kun etter bestilling idet heisen ankommer etasje. Om noen bestiller heisen mens den er på vei gjennom etasjen vil den ikke stoppe. Bra? Problem? Vet ikke helt. Fort gjort å fikse. 11/4: Er dette endret igjen?
-* Endre køsystemet fra array med én dimensjon til to dimensjoner med alle knapper representert? Kan potensielt gjøre at programmet itererer gjennom bestillinger/knappetrykk færre ganger, og at vi slipper å lagre knappetrykk, lamper og kø i tre forskjellige arrayer.
-* Dokumentere #define?
-* Gjøre om globale elevator-variabler til lokale fsm-variabler.
-* Fjerne mulighet for simulator før levering. Det vil gjøre ting litt ryddigere :).
-
 
 
 ## Heis v3
