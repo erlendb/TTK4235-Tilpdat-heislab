@@ -66,7 +66,7 @@ order_t queue_get_order(int floor) {
 
 void queue_update_from_button_signals() {
 	for (int floor=0; floor < N_FLOORS; floor++) {
-		for (int button=0; button < N_BUTTONS; button++) {
+		for (int button = 0; button < N_BUTTONS; button++) {
 			if (buttons_get_signal(floor, button)) queue_add_order(floor, button);
 		}
 	}
