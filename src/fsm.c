@@ -22,6 +22,14 @@ void fsm_update_current_floor() {
   currentFloor = elev_get_floor_sensor_signal();
 }
 
+void fsm_unset_last_direction_before_stop() {
+  lastDirectionBeforeStop = DIRN_STOP;
+}
+
+elev_motor_direction_t fsm_last_direction_before_stop_is_set() {
+  return (lastDirectionBeforeStop != DIRN_STOP);
+}
+
 void fsm_set_elevator_direction(elev_motor_direction_t dirn) {
 	elev_set_motor_direction(dirn);
 	if (dirn != DIRN_STOP) lastDirection = dirn;
@@ -43,6 +51,7 @@ void fsm_state_initialize() {
     exit(1);
   }
 	queue_clear_all();
+  lights_clear_all();
   fsm_update_current_floor();
 	if (currentFloor == BETWEEN_FLOORS) fsm_set_elevator_direction(DIRN_DOWN);
 	while (currentFloor == BETWEEN_FLOORS) {
@@ -62,7 +71,7 @@ void fsm_state_go() {
   switch(nextAction) {
     case ENTRY:
       if (currentFloor == BETWEEN_FLOORS && currentDirection == DIRN_STOP) {
-        if (lastDirectionBeforeStop == DIRN_STOP) lastDirectionBeforeStop = lastDirection;
+        if (!fsm_last_direction_before_stop_is_set()) lastDirectionBeforeStop = lastDirection;
         if (queue_any_orders_above(lastFloor) || (lastDirectionBeforeStop == DIRN_DOWN && queue_get_order(lastFloor) != ORDER_NONE)) fsm_set_elevator_direction(DIRN_UP);
         else fsm_set_elevator_direction(DIRN_DOWN);
       }
@@ -80,7 +89,7 @@ void fsm_state_go() {
     case INTERNAL:
       fsm_update_current_floor();
       if (currentFloor != BETWEEN_FLOORS) {
-        lastDirectionBeforeStop = DIRN_STOP;
+        fsm_unset_last_direction_before_stop();
         if (currentFloor != lastFloor) {
           elev_set_floor_indicator(currentFloor);
           lastFloor = currentFloor;

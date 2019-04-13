@@ -2,10 +2,12 @@
 
 Prosjekt i faget TTK4235 Tilpassede datasystemer.
 
+Mekket av Erlend Blomseth og Axel Tveiten Bech.
 
-## Heis utgave 2
 
-Testet og funker i simulator og på sal. FAT gjennomført uten feil 11/4-19. FAT-testet versjon har tag v4.3.
+## Heis v4
+
+Testet og funker i simulator og på sal. FAT 11/4 uten feil med v4.3.
 
 Optimalisert for minst mulig skriving til og lesing fra hardvaren/simulatoren.
 
@@ -46,9 +48,9 @@ Tilstandsmaskinen er bygget opp som følger:
 
 
 
-## Heis utgave 1
+## Heis v3
 
-Siste versjon har tag v3. Testet og fungerer på sal.
+Forbedret versjon av første utgave av heisen. Testet og fungerer på sal.
 
 FAT stort sett ok, tror det bare er én bug:
 Heisen kjører feil retning etter følgende sekvens: håndter en bestilling i en etasje -> send heisen en vei -> nødstopp før heisen kommer til en ny etasje -> send heisen motsatt retning, forbi forrige etasje, uten at heisen stopper i forrige etasje -> bestill heisen til den forrige etasjen heisen stoppet på.

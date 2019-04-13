@@ -31,6 +31,16 @@ typedef enum state_actions {
   */
 void fsm_update_current_floor();
 
+/** @brief lastDirectionBeforeStop-variablen blir satt til 0-ish.
+  *
+  * Variablen blir satt til DIRN_STOP, en verdi og en retning som ikke gir mening av en aktiv lastDirectionBeforeStop-variabel har.
+  */
+void fsm_unset_last_direction_before_stop();
+
+/** @brief Sjekker og returnerer hvorvidt lastDirectionBeforeStop har fått en verdi annet enn initialiserings- og unset-verdien.
+  */
+elev_motor_direction_t fsm_last_direction_before_stop_is_set();
+
 /** @brief Sender motoren i gitt retning, og oppdaterer globale currentDirection og lastDirection.
   *
   * @param[in] dirn Ny motorretning
