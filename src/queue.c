@@ -6,7 +6,7 @@
 
 #define BETWEEN_FLOORS -1
 
-int queue[N_FLOORS] = {0};
+static int queue[N_FLOORS] = {0};
 
 void queue_add_order(int floor, order_t order) {
 	order_t oldOrder = queue[floor];

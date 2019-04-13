@@ -1,6 +1,7 @@
 #include <time.h>
 
 #define TIME_LIMIT 3
+
 static int doorTimer = -1;
 
 void timer_start() {
