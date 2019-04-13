@@ -4,8 +4,6 @@
 
 #include "driver.h"
 
-#define BETWEEN_FLOORS -1
-
 /** @brief Henter knappesignaler fra heisdriveren og oppdaterer lokalt array.
   */
 void buttons_fetch_signals();

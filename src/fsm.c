@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define BETWEEN_FLOORS -1
+
 static state_t nextState = IDLE;
 static state_action_t nextAction = ENTRY;
 

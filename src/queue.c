@@ -4,6 +4,8 @@
 #include "queue.h"
 #include "buttons.h"
 
+#define BETWEEN_FLOORS -1
+
 int queue[N_FLOORS] = {0};
 
 void queue_add_order(int floor, order_t order) {
