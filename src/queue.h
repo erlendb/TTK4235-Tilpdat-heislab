@@ -1,5 +1,8 @@
 /** @file
   * @brief Køsystem
+  *
+  * Denne modulen avhenger av å hente lagrede knappetrykk i buttons-modulen.
+  * Det er mulig å bruke denne modulen uten å være avhengig av buttons-modulen ved å bytte ut buttons_get_signal()-kallene med å kalle elev_get_button_signal() fra elev.h
   */
 
 /** Enum med ordre. Alle verdier bortsett fra ORDER_NONE samsvarer med verdiene fra elev_button_type_t i heisdriveren (elev.h).
@@ -19,15 +22,15 @@ typedef enum orders {
   */
 void queue_add_order(int floor, order_t order);
 
-/** @brief Sletter alle bestillinger fra køen.
-  */
-void queue_clear_all();
-
 /** @brief Sletter alle bestillinger i gitt etasje
 	*
   * @param[in] floor Etasjen bestillinger skal slettes fra
 */
 void queue_clear_floor(int floor);
+
+/** @brief Sletter alle bestillinger fra køen.
+  */
+void queue_clear_all();
 
 /** @brief Sjekker om vi skal stoppe i gitt etasje med gitt retning på heisen
 	*

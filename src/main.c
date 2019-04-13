@@ -1,9 +1,8 @@
-#include <comedilib.h>
 #include "driver.h"
+#include "buttons.h"
 #include "queue.h"
 #include "lights.h"
 #include "fsm.h"
-#include "buttons.h"
 
 int main() {
 

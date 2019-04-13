@@ -1,4 +1,4 @@
-#include "buttons.h"
+#include "driver.h"
 
 static int buttonSignals[N_FLOORS][N_BUTTONS];
 

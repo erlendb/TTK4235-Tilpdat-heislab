@@ -1,24 +1,23 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "driver.h"
 #include "door.h"
 #include "queue.h"
 #include "lights.h"
-#include "fsm.h"
 #include "timer.h"
-#include "buttons.h"
-
-#include <stdlib.h>
-#include <stdio.h>
+#include "fsm.h"
 
 #define BETWEEN_FLOORS -1
 
 static state_t nextState = IDLE;
 static state_action_t nextAction = ENTRY;
 
-int currentFloor = BETWEEN_FLOORS;
-int lastFloor = BETWEEN_FLOORS;
-elev_motor_direction_t currentDirection = DIRN_STOP;
-elev_motor_direction_t lastDirection = DIRN_STOP;
-elev_motor_direction_t lastDirectionBeforeStop = DIRN_STOP;
+static int currentFloor = BETWEEN_FLOORS;
+static int lastFloor = BETWEEN_FLOORS;
+static elev_motor_direction_t currentDirection = DIRN_STOP;
+static elev_motor_direction_t lastDirection = DIRN_STOP;
+static elev_motor_direction_t lastDirectionBeforeStop = DIRN_STOP;
 
 void fsm_update_current_floor() {
   currentFloor = elev_get_floor_sensor_signal();

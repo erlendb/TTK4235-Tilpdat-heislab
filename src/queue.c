@@ -1,8 +1,6 @@
-#include <stdio.h>
-
 #include "driver.h"
-#include "queue.h"
 #include "buttons.h"
+#include "queue.h"
 
 #define BETWEEN_FLOORS -1
 
@@ -16,21 +14,14 @@ void queue_add_order(int floor, order_t order) {
 	else if (oldOrder != ORDER_ALL) queue[floor] = order;
 }
 
-void queue_clear_all() {
-	for (int floor = 0; floor < N_FLOORS; floor++) {
-		queue_add_order(floor, ORDER_NONE);
-	}
-}
-
 void queue_clear_floor(int floor) {
 	queue_add_order(floor, ORDER_NONE);
 }
 
-int queue_any_orders() {
+void queue_clear_all() {
 	for (int floor = 0; floor < N_FLOORS; floor++) {
-		if (queue[floor] != ORDER_NONE) return 1;
+		queue_clear_floor(floor);
 	}
-	return 0;
 }
 
 int queue_should_stop(int floor, elev_motor_direction_t direction) {
@@ -43,6 +34,13 @@ int queue_should_stop(int floor, elev_motor_direction_t direction) {
 	else if (direction == DIRN_UP && order == ORDER_DOWN) return !queue_any_orders_above(floor);
 	else if (direction == DIRN_DOWN && order == ORDER_UP) return !queue_any_orders_below(floor);
 	else return 0;
+}
+
+int queue_any_orders() {
+	for (int floor = 0; floor < N_FLOORS; floor++) {
+		if (queue[floor] != ORDER_NONE) return 1;
+	}
+	return 0;
 }
 
 int queue_any_orders_above(int floor) {

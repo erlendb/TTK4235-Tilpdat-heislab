@@ -2,7 +2,6 @@
   * @brief Dør
   */
 
-
 /** @brief Åpner døra
   */
 void door_open();

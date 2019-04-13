@@ -2,8 +2,6 @@
   * @brief Lesing av nngangssignaler/knappetrykk
   */
 
-#include "driver.h"
-
 /** @brief Henter knappesignaler fra heisdriveren og oppdaterer lokalt array.
   */
 void buttons_fetch_signals();
