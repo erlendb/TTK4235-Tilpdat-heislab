@@ -62,7 +62,7 @@ int queue_any_orders_below(int floor);
 
 /** @brief Henter og returnerer bestillingen i gitt etasje.
 	*
-  * @param[in] floor Etasjen vi skal hente bestillingen fram
+  * @param[in] floor Etasjen vi skal hente bestillingen fra.
   *
   * @return Bestillingsverdien for etasjen: NO_ORDER (ingen bestilling), ORDER_UP (bestilling oppover), ORDER_DOWN (bestilling nedover) eller ORDER_ALL (bestilling inni heisen eller bestilling i begge retninger).
   */

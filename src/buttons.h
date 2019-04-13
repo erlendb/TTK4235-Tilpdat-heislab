@@ -1,6 +1,5 @@
 /** @file
-  * @brief Heis
-  * @details Mellomsteg mellom heisdriveren og tilstandsmaskin/moduler. Globale variabler knyttet til heisen.
+  * @brief Lesing av nngangssignaler/knappetrykk
   */
 
 #include "driver.h"
@@ -12,6 +11,8 @@
 void buttons_fetch_signals();
 
 /** @brief Returnerer hvorvidt en gitt knapp i en gitt etasje er trykket inn (ja/nei).
+  *
+  * Returnerer egentlig den lagrede verdien for knappen. Knappetrykksignaler bør hentes med buttons_fetch_signals() først.
   *
   * @param[in] button Knappen vi spør om er trykket inn
   * @param[in] floor  Etasjen som knappen vi vil spørre etter ligger i.
