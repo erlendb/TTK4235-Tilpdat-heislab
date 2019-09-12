@@ -1,10 +1,4 @@
-// Sett SIMULATOR til 1 for å inkludere simulatordriveren.
-// Sett SIMULATOR til 0 for å inkludere salheisdriveren.
-// Husk å også endre SIMULATOR-flagget i Makefile
-#define SIMULATOR 1
+// Denne fila er her for å gjøre det enklere å bytte driver.
+// Endrer bare driverfila her istedenfor i alle de andre filene.
 
-#if SIMULATOR
-  #include "driver-sim/elev.h"
-#else
-  #include "driver-sal/elev.h"
-#endif
+#include "driver/elev.h"

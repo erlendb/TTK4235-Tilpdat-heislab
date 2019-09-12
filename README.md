@@ -1,22 +1,23 @@
 # Heis Weiß
 
-Prosjekt i faget TTK4235 Tilpassede datasystemer.
+Heisprosjekt i faget TTK4235 Tilpassede datasystemer.
 
 Mekket av Erlend Blomseth og Axel Tveiten Bech.
 
-
 ## Heis v4
 
-v4.3: Testet og funker i simulator og på sal. FAT 11/4 uten feil.
+**v4.4**: Oppdaterte heisdriveren til den nye fra https://github.com/erlendb/TTK4235-tilpdat-simulatorheis
+
+**v4.3**: Testet og funker i simulator og på sal. FAT 11. april uten feil.
 
 Optimalisert for minst mulig skriving til og lesing fra hardvaren/simulatoren.
 
 
-### Hvordan bruke simulator eller heis på sal?
+### Hvordan bytte mellom simulator og heisen på sal
 
-For å kompilere til bruk på sal: sett SIMULATOR-flagget øverst i Makefile og øverst i driver.h til 0.
+For å kompilere til bruk i simulator: bruk `#define SIMULATOR` øverst i *driver/elev.c* og *driver/elev.h*.
 
-For å kompilere til bruk i simulator (https://github.com/TTK4145/Simulator-v2): sett de to nevnte SIMULATOR-flaggene til 1.
+For å kompilere til bruk på sal: bruk `#define SAL` øverst i *driver/elev.c* og *driver/elev.h*.
 
 
 ### Hvordan funker heisen?
@@ -35,18 +36,3 @@ Tilstandsmaskinen er bygget opp som følger:
   * internal (Selve stay-tilstanden)
   * exit (På vei ut av stay-tilstanden)
 * emergency (Nødstopp. Ingen inn- eller ut-tilstander)
-
-
-## Heis v3
-
-Forbedret versjon av første utgave av heisen. Testet og fungerer på sal.
-
-FAT stort sett ok, tror det bare er én bug:
-Heisen kjører feil retning etter følgende sekvens: håndter en bestilling i en etasje -> send heisen en vei -> nødstopp før heisen kommer til en ny etasje -> send heisen motsatt retning, forbi forrige etasje, uten at heisen stopper i forrige etasje -> bestill heisen til den forrige etasjen heisen stoppet på.
-Feilen kommer av at lastDirectionBeforeStop resettes i stay-state og ikke i go-state.
-
-Tilstandsmaskin med tilstander idle, go, stay, stop.
-
-Heisdrivere skal ligge i src/driver.
-
-Kompilatoren pleier å klage på at build/driver/ ikke finnes. Opprett mappen og make på nytt :).

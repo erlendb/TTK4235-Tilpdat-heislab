@@ -1,14 +1,4 @@
-# SIMULATOR = 1: kompilerer riktige filer for å kjøre heisen i simulator
-# SIMULATOR = 0: kompilerer riktige filer for å kjøre heisen på sal
-# Husk å også endre SIMULATOR-flagget i driver.h
-SIMULATOR = 1
-ifeq ($(SIMULATOR), 1)
-	DRIVER_SOURCE = driver-sim/elev.c
-else
-	DRIVER_SOURCE = driver-sal/elev.c driver-sal/io.c
-endif
-
-SOURCES := $(DRIVER_SOURCE) main.c buttons.c fsm.c queue.c lights.c door.c timer.c
+SOURCES := driver/elev.c driver/io.c main.c buttons.c fsm.c queue.c lights.c door.c timer.c
 
 BUILD_DIR := build
 OBJ := $(SOURCES:%.c=$(BUILD_DIR)/%.o)
